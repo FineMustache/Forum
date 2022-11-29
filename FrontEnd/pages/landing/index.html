@@ -10,20 +10,69 @@
 <body>
     <header>
         <nav>
-            <div class="nav-left">
+            <div class="nav-left" onclick="window.location.reload()">
                 <img src="../../assets/offside.svg" alt="">
                 <span>OFFSIDE</span>
             </div>
             <div class="nav-right">
-                <a href="#">Login</a>
-                <a href="#">Cadastro</a>
+                
             </div>
         </nav>
     </header>
     <div class="page">
         <div class="middle">
             <p class="title">Participe da maior comunidade de entusiastas do esporte mais famoso do mundo!</p>
-            <button class="cta">Vamos</button>
+            <button class="cta" onclick="loginUp()">Vamos lá</button>
+        </div>
+        <div class="login">
+            <div class="form-control">
+                <label for="email">Username</label>
+                <input type="text" name="email" id="email">
+            </div>
+            <div class="form-control">
+                <label for="senha">Senha</label>
+                <input type="password" name="senha" id="senha">
+            </div>
+            <div class="err">
+                <p>Verifique as Credenciais e tente novamente!</p>
+            </div>
+            <button class="btn-login cta" onclick="login()">Login</button>
+            <p class="signup">Não possui conta? <span onclick="signupUp()">Crie Agora!</span></p>
+        </div>
+        <div class="signup-card">
+            <div class="avatar">
+                <div class="img-wrap">
+                    <img src="https://ionicframework.com/docs/img/demos/avatar.svg" alt="" class="placeholder">
+                    <img src="" alt="" class="actual-img escondido">
+                    <div class="overlap" onclick="document.getElementById('inpImg').click()">
+                        <span>Adicionar Foto</span>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="inpImg" onchange="loadImg(this.files[0])" accept="image/png, image/jpeg">
+            <div class="form-control">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="usernameCad">
+            </div>
+            <div class="form-control">
+                <label for="senha">Senha</label>
+                <input type="password" name="senha" id="senhaCad" onfocus="senhaFocus()" onfocusout="senhaFocus()" onkeyup="senhaChange(this.value)">
+                <div class="tooltip escondido">
+                    <p>A senha deve possuir:</p>
+                    <p class="requisito" id="pwLength">8 caractéres</p>
+                    <p class="requisito" id="pwUC">1 letra maiúscula</p>
+                    <p class="requisito" id="pwNum">1 número</p>
+                </div>
+            </div>
+            <div class="form-control">
+                <label for="senha">Repita a Senha</label>
+                <input type="password" name="senha" id="repSenha" onkeyup="repSenhaChange(this.value)">
+            </div>
+            <div class="err">
+                <p>Verifique as Credenciais e tente novamente!</p>
+            </div>
+            <button class="btn-signup cta" onclick="login()">Cadastrar</button>
+            <p class="signup">Já possui conta? <span onclick="suToLogin()">Entre Agora!</span></p>
         </div>
         <div class="watermark">
             <img src="../../assets/ball.svg" alt="" class="ball1">

@@ -66,7 +66,7 @@
           if (err == null) {
           let post = new Post(result[0].id, result[0].id_usuario, result[0].nome, result[0].titulo, result[0].corpo, result[0].votos, result[0].data)
           con.query(`SELECT * from vw_resp where id=${result[0].id}`, (err2, result2) => {
-              if(err !== null){
+              if(err2 !== null){
                   res.json(err2).end()
               } else {
                   console.log(result2)
@@ -74,7 +74,7 @@
                       let resp = new Resposta(r.id, r.nome_resposta, r.resp_corpo, r.resp_data)
                       console.log(resp)
                       con.query(`SELECT * from treplicas where id_resposta = ${r.id}`, (err3, result3) => {
-                        if (err !== null) {
+                        if (err3 !== null) {
                           res.json(err3).end()
                         } else {
                           resp.addComponent(result3[0])

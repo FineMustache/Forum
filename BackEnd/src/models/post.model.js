@@ -14,9 +14,27 @@ const del = (dados) => {
     return `DELETE from posts where id=${dados.id}`
 }
 
+// const toAscii = (dados)=>{
+//     dados.forEach(d => {
+//         d.forEach(foto => {
+//             if(foto != null) foto = foto.toString('ascii');
+//         })
+        
+//     });
+//     return dados;
+// }
+
+const toAscii = (dados)=>{
+    dados.forEach(d => {
+        if(d.foto != null) d.foto = d.foto.toString('ascii');
+    });
+    return dados;
+}
+
 module.exports = {
     create,
     readAll,
     read,   
-    del
+    del,
+    toAscii
 }

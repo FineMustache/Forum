@@ -16,10 +16,20 @@
     }
 
     respostas = [];
+    fotos = [];
+    tags = [];
 
     addComponent(com) {
       this.respostas.push(com);
       
+    }
+
+    addFotos(com){
+      this.fotos.push(com)
+    }
+
+    addTags(com){
+      this.tags.push(com)
     }
   }
 
@@ -54,8 +64,54 @@
     let string = PostModel.readAll();
     con.query(string, (err, result) => {
       if (err == null) {
-        //res.json(result).end();
-        res.json(result).end();
+        result = PostModel.toAscii(result)
+        let posts = []
+        result.forEach((r, index) => {
+          let post = new Post(r.id, r.id_usuario, r.nome, r.titulo, r.corpo, r.votos, r.data)
+          posts.push(post)
+        })
+        posts = Array.from(new Set(posts.map(a => a.id)))
+            .map(id => {
+              return posts.find(a => a.id === id)
+            })
+
+        posts.forEach((p, index) => {
+          result.forEach(r => {
+            if (p.id == r.id) {
+              p.addFotos(r.foto)
+            }
+          })
+
+          // con.query(`SELECT * from tags_posts WHERE id_post = ${p.id}`, (err2, result2) => {
+          //   if (err2 == null) {
+          //     result2.forEach((r, index2) => {
+          //       con.query(`SELECT * from tags WHERE id = ${r.id_tag}`, (err3, result3) => {
+          //         if (err == null) {
+          //           p.addTags(result3[0])
+          //         console.log(index, index2)
+          //         if (index2 == result2.length + 1 && index == posts.length + 1) {
+                    
+          //         }
+          //         res.json(posts).end();
+          //         } else {
+          //           res.json(err).end()
+          //         }
+                  
+          //       })
+          //     });
+          //   } else {
+          //     res.json(err).end()
+          //   }
+          // })
+        })
+
+        res.json(posts).end();
+
+        
+
+        
+      } else {
+        res.json(err).end()
       }
     });
   };

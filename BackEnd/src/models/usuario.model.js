@@ -7,6 +7,10 @@ const toCreate = (dados,file) =>{
     return `insert into receitas values (default,'${dados.nome}','${dados.senha}','${dados.foto}')`;
 }
 
+const toRead = (dados) =>{
+    return `select * from usuarios where nome = '${dados.nome}'`
+}
+
 const toAscii = (dados)=>{
     dados.forEach(d => {
         if(d.foto != null) d.foto = d.foto.toString('ascii');
@@ -17,5 +21,6 @@ const toAscii = (dados)=>{
 module.exports = {
     create,
     toCreate,
-    toAscii
+    toAscii,
+    toRead
 }

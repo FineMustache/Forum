@@ -26,7 +26,13 @@ const del = (dados) => {
 
 const toAscii = (dados)=>{
     dados.forEach(d => {
-        if(d.foto != null) d.foto = d.foto.toString('ascii');
+        if(d.foto != null && d.foto != undefined){
+            d.foto = d.foto.toString('ascii')
+        } else if (d.fotos != null && d.fotos != undefined) {
+            d.fotos.forEach(f => {
+                f = f.toString('ascii')
+            })
+        }
     });
     return dados;
 }

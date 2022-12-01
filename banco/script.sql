@@ -80,13 +80,25 @@ CREATE TABLE favoritos (
 
 
 CREATE VIEW vw_posts AS
-SELECT p.id, p.id_usuario, p.titulo, p.corpo, p.votos, p.data, u.nome, f.foto, t.nome as nome_tag, t.cor from usuarios u
+SELECT p.id, p.id_usuario, p.titulo, p.corpo, p.votos, p.data, u.nome, f.foto from usuarios u
 LEFT JOIN posts p ON p.id_usuario = u.id
 LEFT JOIN fotos f ON f.id_post = p.id
-LEFT JOIN tags_posts tp ON tp.id_post = p.id
-LEFT JOIN tags t ON t.id = tp.id_tag;
+
+CREATE VIEW vw_trep AS
+SELECT t.*, u.nome FROM treplicas t
+INNER JOIN usuarios u ON t.id_usuario = u.id
 
 CREATE VIEW vw_resp AS
-SELECT p.id, r.id as id_resp, r.corpo as resp_corpo, r.data as resp_data, u.nome as nome_resposta from vw_posts p
+SELECT p.id, r.id as id_resp, r.corpo as resp_corpo, r.data as resp_data, u.nome as nome_resposta, t.corpo as corpo_treplica, t.nome as nome_treplica, t.data as data_treplica from posts p
 INNER JOIN respostas r ON r.id_post = p.id
-INNER JOIN usuarios u ON u.id = r.id_usuario;
+INNER JOIN usuarios u ON u.id = r.id_usuario
+LEFT JOIN vw_trep t ON t.id_resposta = r.id;
+
+CREATE VIEW vw_usuarios AS
+SELECT u.*, t.nome from usuarios u
+LEFT JOIN favoritos f on u.id = f.id_usuario
+LEFT JOIN tags t on t.id = f.id_tag
+
+CREATE VIEW vw_tags_posts AS
+SELECT tp.*, t.nome from tags_posts tp
+INNER JOIN tags t ON t.id = tp.id_tag

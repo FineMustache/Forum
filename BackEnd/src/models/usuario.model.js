@@ -4,11 +4,11 @@ const create = (dados) => {
 
 const toCreate = (dados,file) =>{
     dados.foto = file.buffer.toString('base64');
-    return `insert into receitas values (default,'${dados.nome}','${dados.senha}','${dados.foto}')`;
+    return `insert into usuarios values (default,'${dados.nome}','${dados.senha}','${dados.foto}')`;
 }
 
 const toRead = (dados) =>{
-    return `select * from usuarios where nome = '${dados.nome}'`
+    return `select * from vw_usuarios where nome = '${dados.nome}'`
 }
 
 const toAscii = (dados)=>{

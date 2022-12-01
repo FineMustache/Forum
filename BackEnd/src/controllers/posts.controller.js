@@ -1,7 +1,5 @@
   const PostModel = require("../models/post.model");
   const con = require("../models/usuariosDAO");
-  const multer = require("multer");
-  const upload = multer().single("foto");
 
   class Post {
 
@@ -50,7 +48,7 @@
   }
 
   const cadastrarPost = async (req, res) => {
-    let string = PostModel.create(req.body, req.file);
+    let string = PostModel.create(req.body);
     con.query(string, (err, result) => {
       if (err == null) {
         res.status(201).json(result).end();
@@ -84,24 +82,23 @@
 
           con.query(`SELECT * from vw_tags_posts WHERE id_post = ${p.id}`, (err2, result2) => {
             if (err2 == null) {
-              result2.forEach((r, index2) => {
-                console.log(r)
-                p.addTags(r.nome)
-                if(index2 == result2.length - 1 && index == posts.length - 1){
-                  res.json(posts).end();
-                }
-              });
+              if (result2.length > 0) {
+                result2.forEach((r, index2) => {
+                  p.addTags(r.nome)
+                  if(index2 == result2.length - 1 && index == posts.length - 1){
+                    res.json(posts).end();
+                  }
+                });
+              }else {
+                res.status(201).json(posts).end()
+              }
+              
             } else {
               res.json(err2).end()
             }
           })
         })
 
-        
-
-        
-
-        
       } else {
         res.json(err).end()
       }
@@ -124,12 +121,17 @@
 
                   con.query(`SELECT * from vw_tags_posts WHERE id_post = ${post.id}`, (err3, result3) => {
                     if (err3 == null) {
-                      result3.forEach((r2, index) => {
-                        post.addTags(r2.nome)
-                        if(index == result3.length - 1){
-                          res.json(PostModel.toAscii([post])).end()
-                        }
-                      });
+                      if (result3.length > 0) {
+                        result3.forEach((r2, index) => {
+                          post.addTags(r2.nome)
+                          if(index == result3.length - 1){
+                            res.json(PostModel.toAscii([post])).end()
+                          }
+                        });
+                      }else{
+                        res.json(PostModel.toAscii([post])).end()
+                      }
+                      
                     } else {
                       res.json(err3).end()
                     }

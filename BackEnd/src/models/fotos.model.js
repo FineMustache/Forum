@@ -4,7 +4,7 @@ const toCreate = (dados,file) =>{
 }
 
 const toRead = (dados) => {
-    return `select * from fotos where id_post = ${dados.id}`
+    return `select * from fotos where id_post = ${dados}`
 }
 
 module.exports = {

@@ -21,20 +21,25 @@ dotenv.config()
 const multer = require('multer');
 const upload = multer().single('foto')
 const bcrypt = require('bcrypt')
-// bcrypt.genSalt(10, function(err, salt) {
-// bcrypt.hash("SenhaMelhor12", salt, function(errCrypto, hash) {
-//   console.log(hash)
-// })
-// })
+bcrypt.genSalt(10, function(err, salt) {
+bcrypt.hash("SenhaTop12", salt, function(errCrypto, hash) {
+  console.log(hash)
+})
+})
 
 const readUser = async (req, res) => {
   con.query(UserModel.toRead(req.params), (err, result) => {
     if (err == null) {
-      let user = new User(result[0].id, result[0].nome, result[0].senha, result[0].foto)
-      result.forEach(r => {
-        user.addFavorito(r.nome_tag)
-      })
-      res.status(201).json(UserModel.toAscii([user])).end()
+      if (result.length > 0) {
+        let user = new User(result[0].id, result[0].nome, result[0].senha, result[0].foto)
+        result.forEach(r => {
+          user.addFavorito(r.nome_tag)
+        })
+        res.status(201).json(UserModel.toAscii([user])).end()
+      } else {
+        res.status(201).json({"message": "Usuário não encontrado"})
+      }
+      
     } else {
       res.status(500).json(err)
     }

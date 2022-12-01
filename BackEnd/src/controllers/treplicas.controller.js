@@ -1,19 +1,18 @@
-const Respostas = require('../models/resposta.model.js');
-const con = require('../models/usuariosDAO');
+const con = require('../models/usuariosDAO')
+const Treplica = require('../models/treplicas.model')
 
-const create = async (req, res) => {
-    let string = Respostas.create(req.body);
-    con.query(string, (err, result) => {
+const toCreate = (req, res) => {
+    con.query(Treplica.toCreate(req.body), (err, result) => {
         if (err == null) {
-            res.status(201).json(result).end();
+            res.status(201).json(result).end()
         } else {
-            res.status(400).json(err).end();
+            res.status(500).json(err).end()
         }
-    });
+    })
 }
 
 const del = (req, res) => {
-    let string = Respostas.del(req.body);
+    let string = Treplica.toDelete(req.body);
     con.query(string, (err, result) => {
         if (err == null)
             if (result.affectedRows > 0)
@@ -26,6 +25,6 @@ const del = (req, res) => {
 }
 
 module.exports = {
-    create,
+    toCreate,
     del
 }

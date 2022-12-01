@@ -5,7 +5,7 @@ const create = async (req, res) => {
     let string = Votos.create(req.body);
     con.query(string, (err, result) => {
         if (err == null) {
-            res.status(201).end();
+            res.status(201).json(result).end();
         } else {
             res.status(400).json(err).end();
         }
@@ -17,9 +17,18 @@ const readAll = (req, res) => {
     con.query(string, (err, result) => {
         if (err == null) {
             //res.json(result).end();
-            res.json(Votos(result)).end();
+            res.json(result).end();
         }
     });
+}
+
+const readFromUser = (req, res) => {
+    let string = Votos.readFromUser(req.params)
+    con.query(string, (err, result) => {
+        if (err == null) {
+            res.status(201).json(result).end()
+        }
+    })
 }
 
 const update = (req, res) => {
@@ -27,7 +36,7 @@ const update = (req, res) => {
     con.query(string, (err, result) => {
         if (err == null)
             if (result.affectedRows > 0)
-                res.status(200).end();
+                res.status(200).json(result).end();
             else
                 res.status(404).end();
         else
@@ -40,7 +49,7 @@ const del = (req, res) => {
     con.query(string, (err, result) => {
         if (err == null)
             if (result.affectedRows > 0)
-                res.status(200).end();
+                res.status(200).json(result).end();
             else
                 res.status(404).end();
         else
@@ -52,5 +61,6 @@ module.exports = {
     create,
     readAll,
     update,
-    del
+    del,
+    readFromUser
 }

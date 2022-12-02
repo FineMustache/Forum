@@ -1,9 +1,10 @@
 class User {
-  constructor(id, nome, senha, foto){
+  constructor(id, nome, senha, foto, tipo){
     this.id = id
     this.nome = nome
     this.senha = senha
     this.foto = foto
+    this.tipo = tipo
   }
 
   favoritos = []
@@ -15,23 +16,24 @@ class User {
 
 
 const UserModel = require("../models/usuario.model");
+const jwt = require("jsonwebtoken")
 const con = require("../models/usuariosDAO");
 const dotenv = require('dotenv')
 dotenv.config()
 const multer = require('multer');
 const upload = multer().single('foto')
 const bcrypt = require('bcrypt')
-bcrypt.genSalt(10, function(err, salt) {
-bcrypt.hash("SenhaTop12", salt, function(errCrypto, hash) {
-  console.log(hash)
-})
-})
+// bcrypt.genSalt(10, function(err, salt) {
+// bcrypt.hash("SenhaTop12", salt, function(errCrypto, hash) {
+//   console.log(hash)
+// })
+// })
 
 const readUser = async (req, res) => {
   con.query(UserModel.toRead(req.params), (err, result) => {
     if (err == null) {
       if (result.length > 0) {
-        let user = new User(result[0].id, result[0].nome, result[0].senha, result[0].foto)
+        let user = new User(result[0].id, result[0].nome, result[0].senha, result[0].foto, result[0].tipo)
         result.forEach(r => {
           user.addFavorito(r.nome_tag)
         })
@@ -88,7 +90,15 @@ const validaUser = async (req, res) => {
       if (result.length > 0) {
         bcrypt.compare(req.body.senha, result[0].senha).then((value) => {
           if (value) {
-            res.status(201).json({"validation": true, "username": result[0].nome, "uid": result[0].id}).end()
+            let data = {"uid": result[0].id, "role": result[0].tipo}
+            jwt.sign(data, process.env.KEY, {expiresIn: '1m'}, function(err, token) {
+              if(err == null){
+                  res.status(200).json({"token": token}).end()
+              } else {
+                  res.status(404).json(err).end()
+              }
+              
+            })
           } else {
             res.status(201).json({"validation": false}).end()
           }

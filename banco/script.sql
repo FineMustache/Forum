@@ -3,11 +3,18 @@ CREATE DATABASE offside charset=UTF8 collate utf8_general_ci;
 
 USE offside;
 
+CREATE TABLE roles (
+    id int not null PRIMARY KEY AUTO_INCREMENT,
+    tipo varchar(5) not null
+);
+
 CREATE TABLE usuarios (
     id int not null PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(30) NOT NULL,
     senha VARCHAR(100) NOT NULL,
-    foto mediumblob
+    id_role int NOT NULL,
+    foto mediumblob,
+    FOREIGN KEY (id_role) REFERENCES roles(id)
 );
 
 CREATE TABLE posts (
@@ -78,7 +85,6 @@ CREATE TABLE favoritos (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
-
 CREATE VIEW vw_posts AS
 SELECT p.id, p.id_usuario, p.titulo, p.corpo, p.votos, p.data, u.nome, f.foto from usuarios u
 LEFT JOIN posts p ON p.id_usuario = u.id
@@ -95,24 +101,29 @@ INNER JOIN usuarios u ON u.id = r.id_usuario
 LEFT JOIN vw_trep t ON t.id_resposta = r.id;
 
 CREATE VIEW vw_usuarios AS
-SELECT u.*, t.nome as nome_tag from usuarios u
+SELECT u.*, t.nome as nome_tag, r.tipo from usuarios u
 LEFT JOIN favoritos f on u.id = f.id_usuario
-LEFT JOIN tags t on t.id = f.id_tag;
+LEFT JOIN tags t on t.id = f.id_tag
+INNER JOIN roles r on r.id = u.id_role;
 
 CREATE VIEW vw_tags_posts AS
 SELECT tp.*, t.nome from tags_posts tp
 INNER JOIN tags t ON t.id = tp.id_tag;
 
-INSERT INTO usuarios VALUES
-(DEFAULT, "finemustache", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", NULL),
-(DEFAULT, "vinimalvadao", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", NULL),
-(DEFAULT, "sanzappa", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", NULL),
-(DEFAULT, "felipe357", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", NULL);
+INSERT INTO roles VALUES
+(DEFAULT, "ADMIN"),
+(DEFAULT, "USER");
 
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/finemustache.png")) where id = 1;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/vinimalvadao.png")) where id = 2;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/sanzappa.png")) where id = 3;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/felipe357.jpg")) where id = 4;
+INSERT INTO usuarios VALUES
+(DEFAULT, "finemustache", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 1, NULL),
+(DEFAULT, "vinimalvadao", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 2, NULL),
+(DEFAULT, "sanzappa", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 2, NULL),
+(DEFAULT, "felipe357", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 2, NULL);
+
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/finemustache.png")) where id = 1;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/vinimalvadao.png")) where id = 2;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/sanzappa.png")) where id = 3;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/felipe357.jpg")) where id = 4;
 
 INSERT INTO posts VALUES
 (DEFAULT, 1, "Harry Kane brabo dms", "Se liga umas foto dele", 200, CURRENT_TIME()),
@@ -137,10 +148,10 @@ INSERT INTO fotos VALUES
 (DEFAULT, NULL, 2),
 (DEFAULT, NULL, 3);
 
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/hk1.jpg")) where id = 1;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/hk2.jpg")) where id = 2;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/haaland.jpg")) where id = 3;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/cr7.jpg")) where id = 4;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/hk1.jpg")) where id = 1;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/hk2.jpg")) where id = 2;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/haaland.jpg")) where id = 3;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/cr7.jpg")) where id = 4;
 
 INSERT INTO votos VALUES
 (DEFAULT, 1, 2, true),

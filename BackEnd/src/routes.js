@@ -9,10 +9,11 @@ const Treplicas = require('./controllers/treplicas.controller')
 const Fotos = require('./controllers/fotos.controller')
 const Favoritos = require("./controllers/favoritos.controller")
 const TP = require("./controllers/tags_posts.controller")
+const Middleware = require("./middleware/middleware")
 
 router.get("/offside/posts", Post.listarPosts);
 router.get("/offside/post/:id", Post.listarPost);
-router.post("/offside/posts", Post.cadastrarPost);
+router.post("/offside/posts", Middleware.validaAcesso, Post.cadastrarPost);
 
 router.get("/offside/usuarios/:nome", User.readUser)
 router.post("/offside/usuarios/validar", User.validaUser)

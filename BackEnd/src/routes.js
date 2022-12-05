@@ -40,4 +40,6 @@ router.delete("/offside/favoritos", Favoritos.toDelete)
 router.post("/offside/tags_posts", TP.toCreate)
 router.delete("/offside/tags_posts", TP.toDelete)
 
+router.get("/offside/validate/:id", Middleware.permitir)
+
 module.exports = router;

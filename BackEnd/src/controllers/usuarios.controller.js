@@ -57,11 +57,12 @@ const cadastrarUser = async (req, res) => {
             console.log(errCrypto)
             if(errCrypto == null){
               req.body.senha = hash
+              req.body["id_role"] = 2
               let string = UserModel.toCreate(req.body, req.file);
               
               con.query(string, (err2, result) => {
                 if (err2 == null) {
-                  res.status(201).json(result).end();
+                  res.redirect("https://localhost:3000/frontend/pages/cadastroSucesso").end()
                 } else {
                   res.status(500).json(err2).end();
                 }
@@ -82,7 +83,6 @@ const cadastrarUser = async (req, res) => {
     })
   }
 
-
 const validaUser = async (req, res) => {
   let string = UserModel.toRead(req.body)
   con.query(string, (err, result) => {
@@ -91,9 +91,9 @@ const validaUser = async (req, res) => {
         bcrypt.compare(req.body.senha, result[0].senha).then((value) => {
           if (value) {
             let data = {"uid": result[0].id, "role": result[0].tipo}
-            jwt.sign(data, process.env.KEY, {expiresIn: '1m'}, function(err, token) {
+            jwt.sign(data, process.env.KEY, {expiresIn: '20m'}, function(err, token) {
               if(err == null){
-                  res.status(200).json({"token": token}).end()
+                  res.status(200).json({"token": token, "uid": result[0].id, "uname": result[0].nome}).end()
               } else {
                   res.status(404).json(err).end()
               }

@@ -227,10 +227,13 @@ input:focus{
     top: 100%;
     background-color: rgb(22, 22, 20);
     padding: 50px;
+    right: 20%;
+}
+
+form{
     display: flex;
     flex-direction: column;
     gap: 30px;
-    right: 20%;
 }
 
 .avatar{

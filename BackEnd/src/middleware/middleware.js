@@ -15,6 +15,24 @@ const validaAcesso = (req, res, next) => {
     })
 }
 
+const permitir = (req, res) => {
+    const token = req.headers.authorization
+
+    jwt.verify(token, process.env.KEY, (err, data) => {
+        if (err != null) res.status(401).json({"validation": false}).end()
+        else{
+            if(data["uid"] == req.params.id){
+                res.status(200).json({"validation": true}).end()
+            }
+            else{
+                res.status(401).json({"validation": false}).end()
+            }
+        }
+        
+    })
+}
+
 module.exports = {
-    validaAcesso
+    validaAcesso,
+    permitir
 }

@@ -4,7 +4,7 @@ const create = (dados) => {
 
 const toCreate = (dados,file) =>{
     dados.foto = file.buffer.toString('base64');
-    return `insert into usuarios values (default,'${dados.nome}','${dados.senha}','${dados.foto}','${dados.id_role}')`;
+    return `insert into usuarios values (default,'${dados.nome}','${dados.senha}',${dados.id_role},'${dados.foto}')`;
 }
 
 const toRead = (dados) =>{

@@ -1,4 +1,31 @@
 var requisitos = false
+var req1, req2, req3, req4
+
+function signup(ev) {
+    ev.preventDefault()
+    console.log(requisitos)
+    if (requisitos) {
+        document.querySelector("form").submit()
+    }
+}
+
+function login() {
+    const options = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: `{"nome":"${document.querySelector("#username").value}","senha":"${document.querySelector("#senha").value}"}`
+      };
+      
+      fetch('http://localhost:3000/offside/usuarios/validar', options)
+        .then(response => response.json())
+        .then(response => {
+            window.localStorage.setItem('token', response.token)
+            window.localStorage.setItem('uid', response.uid)
+            window.localStorage.setItem('uname', response.uname)
+            window.location.href = "../home"
+        })
+        .catch(err => console.error(err));
+}
 
 function loginUp() {
     document.querySelector(".middle").classList.add('middle-up')
@@ -10,8 +37,8 @@ function loginUp() {
     }, 1700)
 }
 
-function login() {
-    document.querySelector(".err").classList.toggle("errOn")
+function errLogin() {
+    document.querySelector(".err").classList.add("errOn")
 }
 
 function signupUp() {
@@ -48,7 +75,6 @@ function senhaFocus() {
 }
 
 function senhaChange(valor) {
-    let req1, req2, req3, req4
     if (valor.length >= 8) {
         document.querySelector("#pwLength").style.opacity = .5
         req1 = true
@@ -70,7 +96,7 @@ function senhaChange(valor) {
         document.querySelector("#pwNum").style.opacity = 1
         req3 = false
     }
-    req4 = repSenhaChange(document.getElementById('repSenha').value)
+    repSenhaChange(document.getElementById('repSenha').value)
 
     if(req1, req2, req3, req4){
         requisitos = true
@@ -80,9 +106,13 @@ function senhaChange(valor) {
 function repSenhaChange(valor) {
     if (valor == document.querySelector("#senhaCad").value) {
         document.getElementById('repSenha').style.borderColor = 'white'
-        return true
+        req4 = true
     } else {
         document.getElementById('repSenha').style.borderColor = 'red'
-        return false
+        req4 = false
+    }
+
+    if(req1, req2, req3, req4){
+        requisitos = true
     }
 }

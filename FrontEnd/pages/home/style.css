@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;700&display=swap');
+
+*{
+    box-sizing: border-box;
+}
+
+*::selection{
+    background-color: rgb(196, 160, 0);
+}
+
+html, body{
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 200;
+    color: white;
+}
+
+body{
+    background-color: rgb(32, 31, 29);
+}
+
+nav{
+    display: flex;
+    height: 8vh;
+    background-color: rgb(22, 22, 20);
+    color: white;
+    text-decoration: none;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+header{
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
+nav div{
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+nav img{
+    height: 80%;
+}
+
+nav a{
+    color: white;
+    text-decoration: none;
+}
+
+.nav-left{
+    font-family: 'Kanit', sans-serif;
+    font-size: 25pt;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.nav-right > span {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16pt;
+    padding: 0 20px;
+}
+
+#navPfp{
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.nav-right > a:hover {
+    background-color: rgb(196, 160, 0);
+}
+
+.page{
+    height: 100%;
+    padding-top: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

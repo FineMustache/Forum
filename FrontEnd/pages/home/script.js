@@ -142,11 +142,20 @@ function carregarPosts(){
             modelo.querySelector('.img-container').appendChild(img)
           }
         })
-        modelo.classList.remove("modelo")
-        document.querySelector('.main').appendChild(modelo)
+
+        fetch('http://localhost:3000/offside/post/' + post.id, {method: 'GET'})
+          .then(response2 => response2.json())
+          .then(response3 => {
+            if (response3[0].respostas.length > 0) {
+              modelo.querySelector('.respDisplay').classList.remove('modelo')
+            }
+          })
+          .catch(err => console.error(err));
+                modelo.classList.remove("modelo")
+                document.querySelector('.main').appendChild(modelo)
+              })
       })
-    })
-    .catch(err => console.error(err));
+      .catch(err => console.error(err));
 }
 
 setInterval(() => {

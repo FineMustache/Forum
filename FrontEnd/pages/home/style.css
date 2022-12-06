@@ -244,3 +244,12 @@ nav a{
 .voted{
     filter: invert(71%) sepia(55%) saturate(5599%) hue-rotate(22deg) brightness(103%) contrast(101%);
 }
+
+.respDisplay{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.respDisplay:hover{
+    color: rgb(196, 160, 0);
+}

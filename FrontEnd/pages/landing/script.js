@@ -19,10 +19,15 @@ function login() {
       fetch('http://localhost:3000/offside/usuarios/validar', options)
         .then(response => response.json())
         .then(response => {
-            window.localStorage.setItem('token', response.token)
-            window.localStorage.setItem('uid', response.uid)
-            window.localStorage.setItem('uname', response.uname)
-            window.location.href = "../home"
+            if (response.validation) {
+                window.localStorage.setItem('token', response.token)
+                window.localStorage.setItem('uid', response.uid)
+                window.localStorage.setItem('uname', response.uname)
+                window.location.href = "../home"
+            } else {
+                errLogin()
+            }
+            
         })
         .catch(err => console.error(err));
 }

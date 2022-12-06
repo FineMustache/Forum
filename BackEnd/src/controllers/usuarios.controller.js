@@ -93,7 +93,7 @@ const validaUser = async (req, res) => {
             let data = {"uid": result[0].id, "role": result[0].tipo}
             jwt.sign(data, process.env.KEY, {expiresIn: '20m'}, function(err, token) {
               if(err == null){
-                  res.status(200).json({"token": token, "uid": result[0].id, "uname": result[0].nome}).end()
+                  res.status(200).json({"token": token, "uid": result[0].id, "uname": result[0].nome, "validation": true}).end()
               } else {
                   res.status(404).json(err).end()
               }

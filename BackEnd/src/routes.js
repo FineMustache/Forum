@@ -21,8 +21,8 @@ router.post("/offside/usuarios", User.cadastrarUser)
 
 router.get("/offside/votos", Votos.readAll)
 router.get("/offside/votos/:id", Votos.readFromUser)
-router.post("/offside/votos", Votos.create)
-router.put("/offside/votos", Votos.update)
+router.post("/offside/votos", Middleware.validaAcesso, Votos.create)
+router.put("/offside/votos", Middleware.validaAcesso, Votos.update)
 router.delete("/offside/votos", Votos.del)
 
 router.post("/offside/respostas", Respostas.create)

@@ -21,8 +21,66 @@
         </nav>
     </header>
     <div class="page">
+        <div class="tags">
+            <div class="t-wrap">
+                <div id="tag1" class="t-item wc">
+                    <span>Copa do Mundo</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+            <div class="t-wrap">
+                <div id="tag2" class="t-item cl">
+                    <span>Champions League</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+            <div class="t-wrap">
+                <div id="tag3" class="t-item pl">
+                    <span>Premier League</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+            <div class="t-wrap">
+                <div id="tag4" class="t-item disc">
+                    <span>Discussão</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+            <div class="t-wrap">
+                <div class="t-item br" id="tag5">
+                    <span>Brasil</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+            <div class="t-wrap">
+                <div id="tag6" class="t-item im">
+                    <span>Imagens</span>
+                </div>
+                <div class="tbg"></div>
+            </div>
+        </div>
+        <div class="main">
+            <div class="post modelo">
+                <div class="pvotes">
+                    <img src="../../assets/votearrow.png" alt="" class="upvote" onclick="upvoteClick(this, this.parentNode.parentNode)">
+                    <img src="../../assets/votearrow.png" alt="" class="downvote">
+                    <span class="voteCount"></span>
+                </div>
+                <div class="phead">
+                    <span class="ptitle"></span>
+                    <span class="pdata"></span>
+                </div>
+                <span class="pun"></span>
+                <span class="pbody"></span>
+                <div class="img-container">
 
+                </div>
+            </div>
+        </div>
     </div>
+<script src="./package/dayjs.min.js""></script>
+<script src="./package/plugin/relativeTime.js""></script>
+<script src="./package/locale/pt-br.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

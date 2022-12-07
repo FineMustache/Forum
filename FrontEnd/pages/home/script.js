@@ -127,9 +127,11 @@ function montaImg(img) {
 function carregarPosts(){
 
   let modeloPrimeiro = document.querySelector('.modelo').cloneNode(true)
+  let newPost = document.querySelector('.newPost').cloneNode(true)
 
   document.querySelector(".main").innerHTML = ""
 
+  document.querySelector(".main").appendChild(newPost)
   document.querySelector(".main").appendChild(modeloPrimeiro)
 
   const options = {method: 'GET'};
@@ -364,6 +366,146 @@ function favsSend() {
 
 function toggleModal() {
   document.querySelector('.modal-container').classList.toggle('modelo')
+}
+
+function toggleFileModal() {
+  document.querySelector('.modal-file-container').classList.toggle('modelo')
+}
+
+function menuToggle(el) {
+  if (el.querySelector('.menu').style.height == 0 || el.querySelector('.menu').style.height == "0px") {
+    el.querySelector(".menu").style.height = "10vh"
+    setTimeout(() => {
+      el.querySelectorAll("a").forEach(a => {
+        a.style.opacity = 1
+      })
+    }, 200)
+  } else {
+    el.querySelectorAll("a").forEach(a => {
+      a.style.opacity = 0
+    })
+    setTimeout(() => {
+      el.querySelector(".menu").style.height = 0
+    }, 200)
+  }
+  
+}
+
+const padrao = document
+  .querySelector("#dz")
+  .querySelector("span")
+  .cloneNode(true);
+
+function dropHandler(ev) {
+  console.log("File(s) dropped");
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+
+  const dataTransfer = new DataTransfer();
+
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    [...ev.dataTransfer.items].forEach((item, i) => {
+      // If dropped items aren't files, reject them
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        document.querySelector("#dz").querySelector("span").style.display = 'none';
+      let span = document.createElement('span')
+      span.innerHTML = file.name
+      document.querySelector("#dz").appendChild(span)
+        dataTransfer.items.add(file);
+      }
+    });
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    [...ev.dataTransfer.files].forEach((file, i) => {
+      console.log(`… file[${i}].name = ${file.name}`);
+
+      document.querySelector("#dz").querySelector("span").style.display = 'none';
+      let span = document.createElement('span')
+      span.innerHTML = file.name
+      document.querySelector("#dz").appendChild(span)
+      dataTransfer.items.add(file);
+    });
+  }
+
+  document.querySelector("#inpFiles").files = dataTransfer.files;
+  document.querySelector("#dz").classList.toggle("drop-zone-over");
+  document.querySelector("#dz").classList.toggle("drop-zone-full");
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+      });
+  });
+});
+
+function mainScroll() {
+  if (checkVisible()) {
+    document.querySelector('.go-up').style.opacity = 0
+    document.querySelector('.go-up').style.pointerEvents = 'none'
+  } else {
+    document.querySelector('.go-up').style.opacity = 1
+    document.querySelector('.go-up').style.pointerEvents = 'all'
+  }
+  
+}
+
+function checkVisible() {
+  var rect = document.querySelector('#newPost').getBoundingClientRect();
+  console.log(rect.bottom, rect.top)
+  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+  return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
+}
+
+function sair(ev) {
+  ev.preventDefault()
+  window.localStorage.clear()
+  window.location.href = "../landing"
+}
+
+function dragEnterHandler(ev) {
+  console.log("File(s) in drop zone");
+  document.querySelector("#dz").classList.toggle("drop-zone-over");
+}
+
+function dragLeaveHandler(ev) {
+  document.querySelector("#dz").classList.toggle("drop-zone-over");
+}
+
+function dragOverHandler(ev) {
+  ev.preventDefault();
+}
+
+function inpChange(e) {
+  document.querySelector("#dz").querySelector("span").style.display = 'none';
+  for (let i = 0; i < e.files.length; i++){
+    let span = document.createElement('span')
+    span.innerHTML = e.files[i].name
+    document.querySelector("#dz").appendChild(span)
+  }
+  document.querySelector("#dz").classList.add("drop-zone-full");
+}
+
+function cancelFile() {
+  toggleFileModal()
+  document.querySelector('#inpFiles').value = null
+  let span = document.querySelector('#dz').querySelector('span').cloneNode(true)
+  span.style.display = "inline"
+  document.querySelector('#dz').innerHTML = ""
+  document.querySelector("#dz").appendChild(span)
+  document.querySelector("#dz").classList.remove('drop-zone-full')
+  console.log(document.querySelector('#inpFiles').files)
+}
+
+function confirmFile() {
+  toggleFileModal()
+  console.log(document.querySelector('#inpFiles').files)
 }
 
 //checar token

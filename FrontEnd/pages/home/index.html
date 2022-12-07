@@ -63,7 +63,7 @@
             <div class="post modelo">
                 <div class="pvotes">
                     <img src="../../assets/votearrow.png" alt="" class="upvote" onclick="upvoteClick(this, this.parentNode.parentNode)">
-                    <img src="../../assets/votearrow.png" alt="" class="downvote">
+                    <img src="../../assets/votearrow.png" alt="" class="downvote" onclick="downvoteClick(this, this.parentNode.parentNode)">
                     <span class="voteCount"></span>
                 </div>
                 <div class="phead">
@@ -75,7 +75,58 @@
                 <div class="img-container">
 
                 </div>
+                <div class="ptags">
+
+                </div>
                 <p class="respDisplay modelo">Ver Respostas</p>
+                <div class="resp-container modelo">
+                    <div class="resp modelo">
+                        <div class="rhead">
+                            <span class="run"></span>
+                            <span class="rdata"></span>
+                        </div>
+                        <span class="rbody"></span>
+                        <div class="trep-container modelo">
+                            <div class="trep">
+                                <div class="thead">
+                                    <span class="tun"></span>
+                                    <span class="tdata"></span>
+                                </div>
+                                <span class="tbody"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-container modelo">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Selecione suas Categorias Favoritas:</span>
+            </div>
+            <div class="modal-body">
+                <div id="modtag1" class="mod-t-item mod-t-item-unselected wc" onclick="modtagClick(this)">
+                    <span>Copa do Mundo</span>
+                </div>
+                <div id="modtag2" class="mod-t-item mod-t-item-unselected cl" onclick="modtagClick(this)">
+                    <span>Champions League</span>
+                </div>
+                <div id="modtag3" class="mod-t-item mod-t-item-unselected pl" onclick="modtagClick(this)">
+                    <span>Premier League</span>
+                </div>
+                <div id="modtag4" class="mod-t-item mod-t-item-unselected disc" onclick="modtagClick(this)">
+                    <span>Discussão</span>
+                </div>
+                <div id="modtag5" class="mod-t-item mod-t-item-unselected br" onclick="modtagClick(this)">
+                    <span>Brasil</span>
+                </div>
+                <div id="modtag6" class="mod-t-item mod-t-item-unselected im" onclick="modtagClick(this)">
+                    <span>Imagens</span>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="cta" onclick="favsSend()">CONFIRMAR</button>
             </div>
         </div>
     </div>

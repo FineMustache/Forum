@@ -67,10 +67,14 @@
             <div class="newPost" id="newPost">
                 <input type="text" name="titulo" id="inpTitulo" placeholder="Título">
                 <textarea name="corpo" id="taCorpo" cols="30" rows="10" placeholder="Digite o conteúdo da sua postagem..."></textarea>
-                <input type="file" name="fotos" id="inpFiles" accept="image/png, image/jpeg" multiple="multiple" onchange="inpChange(this)" hidden>
+                <form action="http://localhost:3000/offside/fotos" id="formFile" method="post" enctype="multipart/form-data">
+                    <input type="file" name="fotos" id="inpFiles" accept="image/png, image/jpeg" multiple="multiple" onchange="inpChange(this)" hidden>
+                    <input type="text" name="id_post" id="inpIdPost" hidden>
+                </form>
                 <div class="newPostBottom">
-                    <span class="attach" onclick="toggleFileModal()"><img src="../../assets/attach.png" alt=""> Anexar Imagens</span>
-                    <button class="cta">Enviar</button>
+                    <span class="attach" onclick="toggleFileModal()"><img src="../../assets/attach.png" alt=""> Anexar Imagens <span id="fileCount">(0)</span></span>
+                    <span class="tagAdd" onclick="toggleTagModal()">Adicionar Categorias</span>
+                    <button class="cta" onclick="sendPost()">Enviar</button>
                 </div>
             </div>
             <div class="post modelo">
@@ -158,6 +162,37 @@
             <div class="modal-foot">
                 <button class="cta" onclick="cancelFile()">Cancelar</button>
                 <button class="cta" onclick="confirmFile()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-tag-container modelo">
+        <div class="modal-tag">
+            <div class="modal-head">
+                <span>Adicionar Categorias</span>
+            </div>
+            <div class="modal-body">
+                <div id="posttag1" class="mod-t-item mod-t-item-unselected wc" onclick="posttagClick(this)">
+                    <span>Copa do Mundo</span>
+                </div>
+                <div id="posttag2" class="mod-t-item mod-t-item-unselected cl" onclick="posttagClick(this)">
+                    <span>Champions League</span>
+                </div>
+                <div id="posttag3" class="mod-t-item mod-t-item-unselected pl" onclick="posttagClick(this)">
+                    <span>Premier League</span>
+                </div>
+                <div id="posttag4" class="mod-t-item mod-t-item-unselected disc" onclick="posttagClick(this)">
+                    <span>Discussão</span>
+                </div>
+                <div id="posttag5" class="mod-t-item mod-t-item-unselected br" onclick="posttagClick(this)">
+                    <span>Brasil</span>
+                </div>
+                <div id="posttag6" class="mod-t-item mod-t-item-unselected im" onclick="posttagClick(this)">
+                    <span>Imagens</span>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="cta" onclick="toggleTagModal()">Confirmar</button>
             </div>
         </div>
     </div>

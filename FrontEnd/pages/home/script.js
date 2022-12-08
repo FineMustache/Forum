@@ -5,6 +5,8 @@ var user
 
 var favs = []
 
+var postTags = []
+
 function carregar() {
   let token = window.localStorage.getItem('token')
   const options = {
@@ -146,6 +148,10 @@ function carregarPosts(){
             posts.push(post)
           }
         })
+        if (post.tags.length < 1) {
+          console.log(post)
+          posts.push(post)
+        }
       })
       posts.forEach(post => {
         let modelo = document.querySelector('.modelo').cloneNode(true)
@@ -349,6 +355,15 @@ function modtagClick(el) {
   el.classList.toggle('mod-t-item-unselected')
 }
 
+function posttagClick(el) {
+  if (el.classList.contains('mod-t-item-unselected')) {
+    postTags.push(getTag(el.querySelector('span').innerHTML))
+  } else {
+    postTags.splice(favs.indexOf(getTag(el.querySelector('span').innerHTML)), 1)
+  }
+  el.classList.toggle('mod-t-item-unselected')
+}
+
 function favsSend() {
   favs.forEach(f => {
     var options = {
@@ -371,6 +386,11 @@ function toggleModal() {
 function toggleFileModal() {
   document.querySelector('.modal-file-container').classList.toggle('modelo')
 }
+
+function toggleTagModal() {
+  document.querySelector('.modal-tag-container').classList.toggle('modelo')
+}
+
 
 function menuToggle(el) {
   if (el.querySelector('.menu').style.height == 0 || el.querySelector('.menu').style.height == "0px") {
@@ -404,6 +424,8 @@ function dropHandler(ev) {
 
   const dataTransfer = new DataTransfer();
 
+  let filenames = []
+
   if (ev.dataTransfer.items) {
     // Use DataTransferItemList interface to access the file(s)
     [...ev.dataTransfer.items].forEach((item, i) => {
@@ -411,11 +433,9 @@ function dropHandler(ev) {
       if (item.kind === "file") {
         const file = item.getAsFile();
         document.querySelector("#dz").querySelector("span").style.display = 'none';
-      let span = document.createElement('span')
-      span.innerHTML = file.name
-      document.querySelector("#dz").appendChild(span)
-        dataTransfer.items.add(file);
-      }
+          filenames.push(file.name)
+          dataTransfer.items.add(file);
+        }
     });
   } else {
     // Use DataTransfer interface to access the file(s)
@@ -429,10 +449,17 @@ function dropHandler(ev) {
       dataTransfer.items.add(file);
     });
   }
-
+  let span = document.querySelector('#dz').querySelector('span').cloneNode(true)
+  document.querySelector('#dz').innerHTML = ""
+  document.querySelector("#dz").appendChild(span)
+  filenames.forEach(fn => {
+    let span2 = document.createElement('span')
+    span2.innerHTML = fn
+    document.querySelector("#dz").appendChild(span2)
+  })
   document.querySelector("#inpFiles").files = dataTransfer.files;
   document.querySelector("#dz").classList.toggle("drop-zone-over");
-  document.querySelector("#dz").classList.toggle("drop-zone-full");
+  document.querySelector("#dz").classList.add("drop-zone-full");
 }
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -484,10 +511,13 @@ function dragOverHandler(ev) {
 
 function inpChange(e) {
   document.querySelector("#dz").querySelector("span").style.display = 'none';
+  let span = document.querySelector('#dz').querySelector('span').cloneNode(true)
+  document.querySelector('#dz').innerHTML = ""
+  document.querySelector("#dz").appendChild(span)
   for (let i = 0; i < e.files.length; i++){
-    let span = document.createElement('span')
-    span.innerHTML = e.files[i].name
-    document.querySelector("#dz").appendChild(span)
+    let span2 = document.createElement('span')
+    span2.innerHTML = e.files[i].name
+    document.querySelector("#dz").appendChild(span2)
   }
   document.querySelector("#dz").classList.add("drop-zone-full");
 }
@@ -500,12 +530,50 @@ function cancelFile() {
   document.querySelector('#dz').innerHTML = ""
   document.querySelector("#dz").appendChild(span)
   document.querySelector("#dz").classList.remove('drop-zone-full')
-  console.log(document.querySelector('#inpFiles').files)
+  document.querySelector("#fileCount").style.visibility = "hidden"
 }
 
 function confirmFile() {
   toggleFileModal()
   console.log(document.querySelector('#inpFiles').files)
+  document.querySelector("#fileCount").innerHTML = "(" + document.querySelector('#inpFiles').files.length + ")"
+  document.querySelector("#fileCount").style.visibility = "visible"
+}
+
+function sendPost() {
+  var options = {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', Authorization: window.localStorage.getItem('token')},
+    body: `{"id_usuario":${window.localStorage.getItem("uid")},"titulo":"${document.querySelector("#inpTitulo").value}","corpo":"${document.querySelector("#taCorpo").value}","votos":0}`
+  };
+  
+  fetch('http://localhost:3000/offside/posts', options)
+    .then(response => response.json())
+    .then(response => {
+      if (response.affectedRows > 0) {
+        postTags.forEach(pt => {
+          var options2 = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: `{"id_post":${response.insertId},"id_tag":${pt}}`
+          };
+          
+          fetch('http://localhost:3000/offside/tags_posts', options2)
+            .then(response => response.json())
+            .then(response => {})
+            .catch(err => console.error(err));
+        })
+        if (document.querySelector("#inpFiles").files.length < 1) {
+          window.location.reload()
+        }else{
+          document.querySelector("#inpIdPost").value = response.insertId
+          console.log(Object.fromEntries(new FormData(document.querySelector("#formFile"))));
+          document.querySelector("#formFile").submit()
+        }
+        
+      }
+    })
+    .catch(err => console.error(err));
 }
 
 //checar token

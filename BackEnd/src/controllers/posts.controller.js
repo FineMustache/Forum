@@ -90,7 +90,9 @@
                   }
                 });
               }else {
-                res.status(201).json(posts).end()
+                if (index == posts.length - 1) {
+                  res.status(200).json(posts).end() 
+                }
               }
               
             } else {

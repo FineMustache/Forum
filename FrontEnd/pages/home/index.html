@@ -18,7 +18,7 @@
                 <span id="navUn"></span>
                 <img src="" alt="" id="navPfp">
                 <div class="menu">
-                    <a href="#"><span>PERFIL</span></a>
+                    <a href="../profile/"><span>PERFIL</span></a>
                     <a onclick="sair(event)" href="#"><span>SAIR</span></a>
                 </div>
             </div>
@@ -103,6 +103,10 @@
                             <span class="rdata"></span>
                         </div>
                         <span class="rbody"></span>
+                        <div class="form-container modelo">
+                            <input type="text" name="treplica" id="inpTrep" placeholder="Tréplica...">
+                            <button class="cta" onclick="sendTrep(this.parentNode.parentNode.id, this.parentNode.querySelector('input').value)">Enviar</button>
+                        </div>
                         <div class="trep-container modelo">
                             <div class="trep">
                                 <div class="thead">
@@ -113,6 +117,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="form-container">
+                    <input type="text" name="resposta" id="inpResp" placeholder="Resposta...">
+                    <button class="cta" onclick="sendResp(this.parentNode.parentNode.id, this.parentNode.querySelector('input').value)">Enviar</button>
                 </div>
             </div>
         </div>

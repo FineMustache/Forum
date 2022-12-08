@@ -25,10 +25,10 @@ router.post("/offside/votos", Middleware.validaAcesso, Votos.create)
 router.put("/offside/votos", Middleware.validaAcesso, Votos.update)
 router.delete("/offside/votos", Votos.del)
 
-router.post("/offside/respostas", Respostas.create)
+router.post("/offside/respostas", Middleware.validaAcesso, Respostas.create)
 router.delete("/offside/respostas", Respostas.del)
 
-router.post("/offside/treplicas", Treplicas.toCreate)
+router.post("/offside/treplicas", Middleware.validaAcesso, Treplicas.toCreate)
 router.delete("/offside/treplicas", Treplicas.del)
 
 router.get("/offside/fotos/:id", Fotos.listarFotos)

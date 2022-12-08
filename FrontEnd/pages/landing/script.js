@@ -4,7 +4,7 @@ var req1, req2, req3, req4
 function signup(ev) {
     ev.preventDefault()
     console.log(requisitos)
-    if (requisitos) {
+    if (requisitos && document.querySelector('#inpImg').files.length > 0) {
         document.querySelector("form").submit()
     }
 }
@@ -121,3 +121,48 @@ function repSenhaChange(valor) {
         requisitos = true
     }
 }
+
+setInterval(() => {
+    let token = window.localStorage.getItem('token')
+    if (token != null) {
+        const options = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: token
+            }
+          }
+          fetch("http://localhost:3000/offside/validate/" + window.localStorage.getItem("uid"), options)
+          .then(response => response.json())
+          .then(response => {
+            if(!response.validation){
+              window.localStorage.clear()
+              window.location.href = "../home"
+            }
+          })
+          .catch(err => console.log(err))   
+    }
+  }, 60000)
+
+  function validate() {
+    let token = window.localStorage.getItem('token')
+    if (token != null) {
+        const options = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: token
+            }
+          }
+          fetch("http://localhost:3000/offside/validate/" + window.localStorage.getItem("uid"), options)
+          .then(response => response.json())
+          .then(response => {
+            if(!response.validation){
+              window.localStorage.clear()
+            } else {
+                window.location.href = "../home"
+            }
+          })
+          .catch(err => console.log(err))   
+    }
+  }

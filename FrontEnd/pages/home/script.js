@@ -208,14 +208,15 @@ function carregarPosts(){
                 resp.querySelector('.run').innerHTML = r.nome_resposta
                 resp.querySelector('.rdata').innerHTML = dayjs(r.resp_data).fromNow()
                 resp.querySelector('.rbody').innerHTML = r.resp_corpo
-
                 if (r.corpo_treplica !== null) {
                   resp.querySelector('.tun').innerHTML = r.nome_treplica
                   resp.querySelector('.tbody').innerHTML = r.corpo_treplica
                   resp.querySelector('.tdata').innerHTML = dayjs(r.data_treplica).fromNow()
                   resp.querySelector('.trep-container').classList.remove('modelo')
+                } else if (post.nome_usuario == window.localStorage.getItem('uname')) {
+                  resp.querySelector('.form-container').classList.remove('modelo')
                 }
-
+                resp.id = "resp" + r.id_resp
                 resp.classList.remove('modelo')
                 modelo.querySelector('.resp-container').appendChild(resp)
               })
@@ -574,6 +575,44 @@ function sendPost() {
       }
     })
     .catch(err => console.error(err));
+}
+
+function sendResp(postId, respBody) {
+  if (respBody.length > 0) {
+    const options = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', Authorization: window.localStorage.getItem('token')},
+      body: `{"id_post":${postId.slice(1, postId.length)},"id_usuario":${window.localStorage.getItem('uid')},"corpo":"${respBody}"}`
+    };
+    
+    fetch('http://localhost:3000/offside/respostas', options)
+      .then(response => response.json())
+      .then(response => {
+        if (response.affectedRows > 0) {
+          window.location.reload()
+        }
+      })
+      .catch(err => console.error(err));
+  }
+}
+
+function sendTrep(repId, trepBody) {
+  if (trepBody.length > 0) {
+    const options = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', Authorization: window.localStorage.getItem('token')},
+      body: `{"id_resposta":${repId.slice(4, repId.length)},"id_usuario":${window.localStorage.getItem('uid')},"corpo":"${trepBody}"}`
+    };
+    
+    fetch('http://localhost:3000/offside/treplicas', options)
+      .then(response => response.json())
+      .then(response => {
+        if (response.affectedRows > 0) {
+          window.location.reload()
+        }
+      })
+      .catch(err => console.error(err));
+  }
 }
 
 //checar token

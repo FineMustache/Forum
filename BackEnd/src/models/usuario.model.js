@@ -7,6 +7,10 @@ const toCreate = (dados,file) =>{
     return `insert into usuarios values (default,'${dados.nome}','${dados.senha}',${dados.id_role},'${dados.foto}')`;
 }
 
+const toUpdatePassword = (dados) =>{
+    return `update usuarios set senha = '${dados.novaSenha}' where id = ${dados.id}`
+}
+
 const toRead = (dados) =>{
     return `select * from vw_usuarios where nome = '${dados.nome}'`
 }
@@ -22,5 +26,6 @@ module.exports = {
     create,
     toCreate,
     toAscii,
-    toRead
+    toRead,
+    toUpdatePassword
 }

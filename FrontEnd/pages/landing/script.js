@@ -3,7 +3,6 @@ var req1, req2, req3, req4
 
 function signup(ev) {
     ev.preventDefault()
-    console.log(requisitos)
     if (requisitos && document.querySelector('#inpImg').files.length > 0) {
         document.querySelector("form").submit()
     }

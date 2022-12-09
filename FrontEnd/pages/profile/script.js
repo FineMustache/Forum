@@ -1,3 +1,6 @@
+var requisitos = false
+var req1, req2, req3, req4
+
 var user
 
 var favs = []
@@ -16,7 +19,8 @@ function carregar() {
           .then(response => response.json())
           .then(response => {
             if(!response.validation){
-                window.location.href = "../landing"
+              window.localStorage.clear()
+              window.location.href = "../landing"
             } else {
                 fetch('http://localhost:3000/offside/usuarios/' + window.localStorage.getItem('uname'), {method: "GET"})
                 .then(response => response.json())
@@ -53,6 +57,9 @@ function carregar() {
             }
           })
           .catch(err => console.log(err))   
+    } else {
+      window.localStorage.clear()
+      window.location.href = "../landing"
     }
 }
 
@@ -168,3 +175,107 @@ function getTag(tagname) {
     .catch(err => console.error(err));
     
   }
+
+  function senhaFocus() {
+    document.querySelector('.tooltip').classList.toggle('escondido')
+}
+
+function senhaChange(valor) {
+    if (valor.length >= 8) {
+        document.querySelector("#pwLength").style.opacity = .5
+        req1 = true
+    }else{
+        document.querySelector("#pwLength").style.opacity = 1
+        req1 = false
+    }
+    if (valor.match(/[A-Z]/g)) {
+        document.querySelector("#pwUC").style.opacity = .5
+        req2 = true
+    } else {
+        document.querySelector("#pwUC").style.opacity = 1
+        req2 = false
+    }
+    if (valor.match(/[0-9]/g)) {
+        document.querySelector("#pwNum").style.opacity = .5
+        req3 = true
+    } else {
+        document.querySelector("#pwNum").style.opacity = 1
+        req3 = false
+    }
+    repSenhaChange(document.getElementById('repSenha').value)
+
+    if(req1, req2, req3, req4){
+        requisitos = true
+    }
+}
+
+function repSenhaChange(valor) {
+    if (valor == document.querySelector("#senha").value) {
+        document.getElementById('repSenha').style.borderColor = 'white'
+        req4 = true
+    } else {
+        document.getElementById('repSenha').style.borderColor = 'red'
+        req4 = false
+    }
+
+    if(req1, req2, req3, req4){
+        requisitos = true
+    }
+}
+
+function redSenha() {
+  if (requisitos) {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: window.localStorage.getItem('token')
+      },
+      body: `{"id":${window.localStorage.getItem('uid')},"nome":"${window.localStorage.getItem('uname')}","senha":"${document.querySelector('#cursenha').value}","novaSenha":"${document.querySelector('#senha').value}","update":true}`
+    };
+    console.table(options.body)
+    
+    fetch('http://localhost:3000/offside/usuarios/redsenha', options)
+      .then(response => response.json())
+      .then(response => {
+        console.log(response)
+        if (response.success) {
+          document.querySelector('.success').classList.add('successOn')
+          document.querySelector(".err").classList.remove("errOn")
+        } else {
+          errLogin()
+        }
+      })
+      .catch(err => console.error(err));
+  }
+}
+
+function errLogin() {
+  document.querySelector(".err").classList.add("errOn")
+}
+
+function sair() {
+  window.localStorage.clear()
+  window.location.href = "../landing"
+}
+
+//checar token
+setInterval(() => {
+  let token = window.localStorage.getItem('token')
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token
+    }
+  }
+  fetch("http://localhost:3000/offside/validate/" + window.localStorage.getItem("uid"), options)
+  .then(response => response.json())
+  .then(response => {
+    if(!response.validation){
+      window.localStorage.clear()
+      window.location.href = "../landing"
+    }
+  })
+  .catch(err => console.log(err))
+}, 60000)

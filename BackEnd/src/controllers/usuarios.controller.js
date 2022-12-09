@@ -84,7 +84,46 @@ const cadastrarUser = async (req, res) => {
     })
   }
 
-const validaUser = async (req, res) => {
+const redefinirSenha = async (req, res) => {
+  bcrypt.genSalt(10, function(err, salt) {
+    if (err == null) {
+      bcrypt.hash(req.body.novaSenha, salt, function(errCrypto, hash) {
+        console.log(errCrypto)
+        if(errCrypto == null){
+          req.body.novaSenha = hash
+          let string = UserModel.toUpdatePassword(req.body)
+  
+          con.query(string, (err, result) => {
+            if (err == null) {
+              if (result.affectedRows > 0) {
+                res.status(200).json({'success':true}).end()
+              } else {
+                res.status(404).json({'success':false}).end()
+              }
+            } else {
+              res.status(500).json(err).end()
+            }
+          })
+        } else {
+          res.status(500).json(errCrypto).end()
+        }
+      });
+    } else {
+      res.status(500).json(err).end()
+    }
+  })
+  let string = UserModel.toUpdatePassword(req.body)
+  
+  con.query(string, (err, result) => {
+    if (err == null) {
+      if (result.affectedRows > 0) {
+        
+      }
+    }
+  })
+}
+
+const validaUser = async (req, res, next) => {
   let string = UserModel.toRead(req.body)
   con.query(string, (err, result) => {
     if (err == null) {
@@ -92,14 +131,18 @@ const validaUser = async (req, res) => {
         bcrypt.compare(req.body.senha, result[0].senha).then((value) => {
           if (value) {
             let data = {"uid": result[0].id, "role": result[0].tipo}
-            jwt.sign(data, process.env.KEY, {expiresIn: '20m'}, function(err, token) {
-              if(err == null){
+            jwt.sign(data, process.env.KEY, {expiresIn: '20m'}, function(err2, token) {
+              if(err2 == null){
+                if (req.body.update === true) {
+                  next()
+                }else{
                   res.status(200).json({"token": token, "uid": result[0].id, "uname": result[0].nome, "validation": true}).end()
+                }
               } else {
-                  res.status(404).json(err).end()
+                  res.status(404).json(err2).end()
               }
               
-            })
+            })  
           } else {
             res.status(201).json({"validation": false}).end()
           }
@@ -118,5 +161,6 @@ const validaUser = async (req, res) => {
 module.exports = {
   cadastrarUser,
   validaUser,
-  readUser
+  readUser,
+  redefinirSenha
 }

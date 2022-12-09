@@ -18,6 +18,7 @@ router.post("/offside/posts", Middleware.validaAcesso, Post.cadastrarPost);
 router.get("/offside/usuarios/:nome", User.readUser)
 router.post("/offside/usuarios/validar", User.validaUser)
 router.post("/offside/usuarios", User.cadastrarUser)
+router.post("/offside/usuarios/redsenha", Middleware.validaAcesso, User.validaUser, User.redefinirSenha)
 
 router.get("/offside/votos", Votos.readAll)
 router.get("/offside/votos/:id", Votos.readFromUser)

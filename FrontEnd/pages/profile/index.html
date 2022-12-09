@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../../assets/favicon.png" type="image/x-icon">
     <title>Perfil</title>
 </head>
 <body onload="carregar()">
@@ -31,31 +32,61 @@
             </div>
             
         </div>
-        <div class="fav-edit">
-            <span>Editar Favoritos</span>
-            <div class="favs">
-                <div id="modtag1" class="mod-t-item mod-t-item-unselected wc" onclick="modtagClick(this)">
-                    <span>Copa do Mundo</span>
+        <div class="middle">
+            <div class="fav-edit">
+                <span>Editar Favoritos</span>
+                <div class="favs">
+                    <div id="modtag1" class="mod-t-item mod-t-item-unselected wc" onclick="modtagClick(this)">
+                        <span>Copa do Mundo</span>
+                    </div>
+                    <div id="modtag2" class="mod-t-item mod-t-item-unselected cl" onclick="modtagClick(this)">
+                        <span>Champions League</span>
+                    </div>
+                    <div id="modtag3" class="mod-t-item mod-t-item-unselected pl" onclick="modtagClick(this)">
+                        <span>Premier League</span>
+                    </div>
+                    <div id="modtag4" class="mod-t-item mod-t-item-unselected disc" onclick="modtagClick(this)">
+                        <span>Discussão</span>
+                    </div>
+                    <div id="modtag5" class="mod-t-item mod-t-item-unselected br" onclick="modtagClick(this)">
+                        <span>Brasil</span>
+                    </div>
+                    <div id="modtag6" class="mod-t-item mod-t-item-unselected im" onclick="modtagClick(this)">
+                        <span>Imagens</span>
+                    </div>
                 </div>
-                <div id="modtag2" class="mod-t-item mod-t-item-unselected cl" onclick="modtagClick(this)">
-                    <span>Champions League</span>
-                </div>
-                <div id="modtag3" class="mod-t-item mod-t-item-unselected pl" onclick="modtagClick(this)">
-                    <span>Premier League</span>
-                </div>
-                <div id="modtag4" class="mod-t-item mod-t-item-unselected disc" onclick="modtagClick(this)">
-                    <span>Discussão</span>
-                </div>
-                <div id="modtag5" class="mod-t-item mod-t-item-unselected br" onclick="modtagClick(this)">
-                    <span>Brasil</span>
-                </div>
-                <div id="modtag6" class="mod-t-item mod-t-item-unselected im" onclick="modtagClick(this)">
-                    <span>Imagens</span>
-                </div>
+                <button class="cta" onclick="saveFav()">Salvar</button>
             </div>
-            <button class="cta" onclick="saveFav()">Salvar</button>
+            <div class="red-senha-container">
+                <span>Redefinir Senha</span>
+                <div class="form-control">
+                    <label for="cursenha">Senha Atual</label>
+                    <input type="password" name="cursenha" id="cursenha">
+                </div>
+                <div class="err">
+                    <p>Verifique as Credenciais e tente novamente!</p>
+                </div>
+                <div class="form-control">
+                    <label for="senha">Senha</label>
+                    <input type="password" name="senha" id="senha" onfocus="senhaFocus()" onfocusout="senhaFocus()" onkeyup="senhaChange(this.value)" required>
+                    <div class="tooltip escondido">
+                        <p>A senha deve possuir:</p>
+                        <p class="requisito" id="pwLength">8 caractéres</p>
+                        <p class="requisito" id="pwUC">1 letra maiúscula</p>
+                        <p class="requisito" id="pwNum">1 número</p>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label for="repSenha">Repita a Senha</label>
+                    <input type="password" name="repSenha" id="repSenha" onkeyup="repSenhaChange(this.value)">
+                </div>
+                <div class="success">
+                    <p>Senha Redefinida com Sucesso!</p>
+                </div>
+                <button class="cta" onclick="redSenha()">Enviar</button>
+            </div>
         </div>
-        <span id="sair">Sair</span>
+        <span id="sair" onclick="sair()">Sair</span>
     </div>
     <script src="script.js"></script>
 </body>

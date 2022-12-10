@@ -115,6 +115,8 @@ nav a{
 #navPfp{
     border-radius: 50%;
     object-fit: cover;
+    height: 7vh;
+    width: 7vh;
 }
 
 .nav-right > a:hover {

@@ -63,7 +63,12 @@ const cadastrarUser = async (req, res) => {
               
               con.query(string, (err2, result) => {
                 if (err2 == null) {
-                  res.redirect("http://localhost:5500/frontend/pages/cadastroSucesso")
+                  if (req.body.mobile !== undefined) {
+                    res.json(result)
+                  } else {
+                    res.redirect("http://localhost:5500/frontend/pages/cadastroSucesso")
+                  }
+                  
                 } else {
                   res.status(500).json(err2).end();
                 }

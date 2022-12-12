@@ -65,7 +65,10 @@ export default function LoginScreen({navigation}) {
                 .then(response => {
                     if (response.validation) {
                         storeData(response).then(
-                            getData().then((val) => console.log(val))
+                            navigation.reset({
+                                index: 0,
+                                routes: [{name: 'Home'}],
+                              })
                         )
                     }else{
                         setErrOn(true)

@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native-web"
 
 const colors = {
@@ -46,9 +47,27 @@ function getTagColor(tagname) {
 
 export default function Post(props){
     const {info} = props
-    info.fotos.forEach(f => {
-        f = montaImg(f)
-    })
+
+    // React.useEffect(() => {
+    //     console.log(fs)
+    //     info.fotos.forEach(f => {
+    //         if (f !== null) {
+    //             RNFetchBlob.config({
+    //                 // add this option that makes response data to be stored as a file,
+    //                 // this is much more performant.
+    //                 fileCache: true,
+    //               })
+    //                 .fetch("GET", montaImg(f), {
+    //                   //some headers ..
+    //                 })
+    //                 .then((res) => {
+    //                   // the temp file path
+    //                   console.log("The file saved to ", res.path());
+    //                 });
+    //         }
+            
+    //     })
+    // }, [])
 
     return(
         <View style={{display: 'flex', backgroundColor: colors.darkGray, padding: 15, marginTop: 10, paddingLeft: 50, position: 'relative'}}>
@@ -67,11 +86,13 @@ export default function Post(props){
             <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
             {
                 info.fotos.map((f, index) => {
-                    return(
-                        <View key={index} style={{width: 80, height: 80, marginRight: 5}}>
-                            <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={image} />
-                        </View>
-                    )
+                    if (f !== null) {
+                        return(
+                            <View key={index} style={{width: 80, height: 80, marginRight: 5}}>
+                                <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={image} />
+                            </View>
+                        )
+                    }
                 })
             }
             </View>

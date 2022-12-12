@@ -48,6 +48,31 @@ const clearData = async () => {
     }
   }
 
+  function getTagColor(tagname) {
+    switch (tagname) {
+      case "Copa do Mundo":
+        return '#56042C'
+      
+      case "Champions League":
+        return '#06113a'
+  
+      case "Premier League":
+        return '#38003C'
+  
+      case "Discussão":
+        return '#000'
+  
+      case "Brasil":
+        return '#009739'
+  
+      case "Imagens":
+        return '#960000'
+  
+      default:
+        break;
+    }
+  }
+
 export default function HomeScreen({navigation}) {
     const [posts, setPosts] = React.useState([])
     const [modalOn, setModalOn] = React.useState(false)
@@ -96,7 +121,7 @@ export default function HomeScreen({navigation}) {
                 response.forEach(u => {
                 setFavs(u.favoritos)
 
-                fetch('http://localhost:3000/offside/votos/' + user.id, {method: 'GET'})
+                fetch('http://localhost:3000/offside/votos/' + u.id, {method: 'GET'})
                     .then(response => response.json())
                     .then(response => {
                         setVotes(response)
@@ -123,14 +148,33 @@ export default function HomeScreen({navigation}) {
     
       if (!fontsLoaded) {
         return null;
-      }    
-    
+      }
+      
     return (
       <View style={styles.container}>
         <View style={{position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', zIndex: 2, display: modalOn ? 'flex' : 'none', alignItems: 'center', justifyContent:'center', padding: 20}}>
             <View style={{padding: 20, backgroundColor: colors.darkGray, shadowColor: colors.black, shadowRadius: 50}}>
-                <TextOS texto="Cadastro Concluído!" style={{fontSize: 24, textAlign: 'center'}} />
-                <TextOS texto="Você será redirecionado ao Login" style={{fontSize: 20, textAlign: 'center'}} />
+                <TextOS texto="Selecione as Categorias" style={{fontSize: 24, textAlign: 'center'}} />
+                <View style={{display: 'flex', alignItems: 'center'}}>
+                    <TouchableOpacity  style={{backgroundColor: favs.includes('Copa do Mundo') ? getTagColor("Copa do Mundo") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Copa do Mundo'), marginBottom: 10}}>
+                        <TextOS texto="Copa do Mundo" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Champions League') ? getTagColor("Champions League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Champions League'), marginBottom: 10}}>
+                        <TextOS texto="Champions League" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Premier League') ? getTagColor("Premier League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Premier League'), marginBottom: 10}}>
+                        <TextOS texto="Premier League" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Discussão') ? getTagColor("Discussão") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Discussão'), marginBottom: 10}}>
+                        <TextOS texto="Discussão" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Brasil') ? getTagColor("Brasil") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Brasil'), marginBottom: 10}}>
+                        <TextOS texto="Brasil" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Imagens') ? getTagColor("Imagens") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Imagens')}}>
+                        <TextOS texto="Imagens" />
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
         <ScrollView style={{width: '100%', marginTop: 25}}>

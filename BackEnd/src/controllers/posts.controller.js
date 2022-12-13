@@ -107,6 +107,57 @@
     });
   };
 
+  const listarPostsMobile = (req, res) => {
+    let string = PostModel.readAll();
+    con.query(string, (err, result) => {
+      if (err == null) {
+        result = PostModel.toAscii(result)
+        let posts = []
+        result.forEach((r, index) => {
+          let post = new Post(r.id, r.id_usuario, r.nome, r.titulo, r.corpo, r.votos, r.data)
+          posts.push(post)
+        })
+        posts = Array.from(new Set(posts.map(a => a.id)))
+            .map(id => {
+              return posts.find(a => a.id === id)
+            })
+
+        posts.forEach((p, index) => {
+          result.forEach(r => {
+            if (p.id == r.id) {
+              p.addFotos(r.foto)
+            }
+          })
+
+          p.fotos = []
+
+          con.query(`SELECT * from vw_tags_posts WHERE id_post = ${p.id}`, (err2, result2) => {
+            if (err2 == null) {
+              if (result2.length > 0) {
+                result2.forEach((r, index2) => {
+                  p.addTags(r.nome)
+                  if(index2 == result2.length - 1 && index == posts.length - 1){
+                    res.json(posts).end();
+                  }
+                });
+              }else {
+                if (index == posts.length - 1) {
+                  res.status(200).json(posts).end() 
+                }
+              }
+              
+            } else {
+              res.json(err2).end()
+            }
+          })
+        })
+
+      } else {
+        res.json(err).end()
+      }
+    });
+  };
+
   const listarPost = (req, res) => {
       let string = PostModel.read(req.params);
       con.query(string, (err, result) => {
@@ -151,6 +202,7 @@
     cadastrarPost,
     listarPosts,
     listarPost,
+    listarPostsMobile
   };
 
 

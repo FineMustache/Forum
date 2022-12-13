@@ -73,71 +73,167 @@ const clearData = async () => {
     }
   }
 
+  var favsTemp = []
+
 export default function HomeScreen({navigation}) {
     const [posts, setPosts] = React.useState([])
     const [modalOn, setModalOn] = React.useState(false)
     const [favs, setFavs] = React.useState([])
+    const [tag1, setTag1] = React.useState(false)
+    const [tag2, setTag2] = React.useState(false)
+    const [tag3, setTag3] = React.useState(false)
+    const [tag4, setTag4] = React.useState(false)
+    const [tag5, setTag5] = React.useState(false)
+    const [tag6, setTag6] = React.useState(false)
     const [votes, setVotes] = React.useState([])
 
+    const favsHandler = () => {
+      let aux = []
+
+      if(tag1) aux.push("Copa do Mundo")
+      if(tag2) aux.push("Champions League")
+      if(tag3) aux.push("Premier League")
+      if(tag4) aux.push("Discussão")
+      if(tag5) aux.push("Brasil")
+      if(tag6) aux.push("Imagens")
+
+      setFavs(aux)
+      setModalOn(false)
+    }
+
     React.useEffect(() => {
-        fetch('http://localhost:3000/offside/posts', {method: 'GET'})
+        fetch('http://localhost:3000/offside/posts/', {method: 'GET'})
         .then(response => response.json())
-        .then(response => {
-                setPosts([...response])
+        .then(responseP => {
+          getData().then((info) => {
+              fetch('http://localhost:3000/offside/votos/' + info.uid, {method: 'GET'})
+                                  .then(response => response.json())
+                                  .then(response => {
+                                      response.forEach(r => {
+                                        responseP.forEach(p => {
+                                          if (r.id_post == p.id) {
+                                            p["voted"] = r.tipo
+                                          }
+                                        })
+                                      })
+                                      setPosts([...responseP])
+
+                                        if (info !== null) {
+                                            const options = {
+                                                method: 'GET',
+                                                headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: info.token
+                                                }
+                                            }
+                                            fetch("http://localhost:3000/offside/validate/" + info.uid, options)
+                                            .then(response => response.json())
+                                            .then(response => {
+                                                if(!response.validation){
+                                                    clearData().then(() => {
+                                                        navigation.reset({
+                                                            index: 0,
+                                                            routes: [{name: 'Login'}],
+                                                          });
+                                                    })
+                                                }
+                                            })
+                                            .catch(err => {
+                                              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                                            })
+                                
+                                            fetch('http://localhost:3000/offside/usuarios/' + info.uname, {method: "GET"})
+                                            .then(response => response.json())
+                                            .then(response => {
+                                                response.forEach(u => {
+                                                setFavs(u.favoritos)
+                      
+                                                u.favoritos.forEach(f => {
+                                                  switch (f){
+                                                    case 'Copa do Mundo':
+                                                      setTag1(true)
+                                                      break;
+                                                    
+                                                    case 'Champions League':
+                                                      setTag2(true)
+                                                      break;
+                      
+                                                    case 'Premier League':
+                                                      setTag3(true)
+                                                      break;
+                      
+                                                    case 'Discussão':
+                                                      setTag4(true)
+                                                      break;
+                      
+                                                    case 'Brasil':
+                                                      setTag5(true)
+                                                      break;
+                      
+                                                    case 'Imagens':
+                                                      setTag6(true)
+                                                      break;
+                                                  }
+                                                  
+                                                })
+                                                });
+                                            })
+                                            .catch(err => console.error(err));
+                                        } else {
+                                            clearData().then(() => navigation.reset({
+                                                index: 0,
+                                                routes: [{name: 'Login'}],
+                                              }))
+                                        }
+                                        
+                                    
+                                  })
+                                  .catch(err => console.error(err));
+                
+
+              setInterval(() => {
+                getData().then((info) => {
+                  if (info !== null) {
+                      const options = {
+                          method: 'GET',
+                          headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: info.token
+                          }
+                      }
+                      fetch("http://localhost:3000/offside/validate/" + info.uid, options)
+                      .then(response => response.json())
+                      .then(response => {
+                          if(!response.validation){
+                              clearData().then(() => {
+                                  navigation.reset({
+                                      index: 0,
+                                      routes: [{name: 'Login'}],
+                                    });
+                              })
+                          }
+                      })
+                      .catch(err => {
+                        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                      })
+                  } else {
+                      clearData().then(() => navigation.reset({
+                          index: 0,
+                          routes: [{name: 'Login'}],
+                        }))
+                  }
+                  
+              })
+              }, 30000)
             })
             .catch(err => console.error(err))
+          })
     }, [])
 
     React.useEffect(() => {
-        console.log(posts)
+      console.log(posts)
     }, [posts])
 
-    getData().then((info) => {
-        if (info !== null) {
-            const options = {
-                method: 'GET',
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization: info.token
-                }
-            }
-            fetch("http://localhost:3000/offside/validate/" + info.uid, options)
-            .then(response => response.json())
-            .then(response => {
-                if(!response.validation){
-                    clearData().then(() => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{name: 'Login'}],
-                          });
-                    })
-                }
-            })
-            .catch(err => console.log(err))
-
-            fetch('http://localhost:3000/offside/usuarios/' + info.uname, {method: "GET"})
-            .then(response => response.json())
-            .then(response => {
-                response.forEach(u => {
-                setFavs(u.favoritos)
-
-                fetch('http://localhost:3000/offside/votos/' + u.id, {method: 'GET'})
-                    .then(response => response.json())
-                    .then(response => {
-                        setVotes(response)
-                    })
-                    .catch(err => console.error(err));
-                });
-            })
-            .catch(err => console.error(err));
-        } else {
-            clearData().then(() => navigation.reset({
-                index: 0,
-                routes: [{name: 'Login'}],
-              }))
-        }
-        
-    })
     
 
     let [fontsLoaded] = useFonts({
@@ -154,27 +250,30 @@ export default function HomeScreen({navigation}) {
       <View style={styles.container}>
         <View style={{position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', zIndex: 2, display: modalOn ? 'flex' : 'none', alignItems: 'center', justifyContent:'center', padding: 20}}>
             <View style={{padding: 20, backgroundColor: colors.darkGray, shadowColor: colors.black, shadowRadius: 50}}>
-                <TextOS texto="Selecione as Categorias" style={{fontSize: 24, textAlign: 'center'}} />
+                <TextOS texto="Selecione as Categorias" style={{fontSize: 24, textAlign: 'center', marginBottom: 10}} />
                 <View style={{display: 'flex', alignItems: 'center'}}>
-                    <TouchableOpacity  style={{backgroundColor: favs.includes('Copa do Mundo') ? getTagColor("Copa do Mundo") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Copa do Mundo'), marginBottom: 10}}>
+                    <TouchableOpacity onPress={() => setTag1(!tag1)} style={{backgroundColor: tag1 ? getTagColor("Copa do Mundo") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Copa do Mundo'), marginBottom: 10}}>
                         <TextOS texto="Copa do Mundo" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Champions League') ? getTagColor("Champions League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Champions League'), marginBottom: 10}}>
+                    <TouchableOpacity onPress={() => setTag2(!tag2)} style={{backgroundColor: tag2 ? getTagColor("Champions League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Champions League'), marginBottom: 10}}>
                         <TextOS texto="Champions League" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Premier League') ? getTagColor("Premier League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Premier League'), marginBottom: 10}}>
+                    <TouchableOpacity onPress={() => setTag3(!tag3)} style={{backgroundColor: tag3 ? getTagColor("Premier League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Premier League'), marginBottom: 10}}>
                         <TextOS texto="Premier League" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Discussão') ? getTagColor("Discussão") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Discussão'), marginBottom: 10}}>
+                    <TouchableOpacity onPress={() => setTag4(!tag4)} style={{backgroundColor: tag4 ? getTagColor("Discussão") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Discussão'), marginBottom: 10}}>
                         <TextOS texto="Discussão" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Brasil') ? getTagColor("Brasil") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Brasil'), marginBottom: 10}}>
+                    <TouchableOpacity onPress={() => setTag5(!tag5)} style={{backgroundColor: tag5 ? getTagColor("Brasil") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Brasil'), marginBottom: 10}}>
                         <TextOS texto="Brasil" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setFavs} style={{backgroundColor: favs.includes('Imagens') ? getTagColor("Imagens") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Imagens')}}>
+                    <TouchableOpacity onPress={() => setTag6(!tag6)} style={{backgroundColor: tag6 ? getTagColor("Imagens") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Imagens')}}>
                         <TextOS texto="Imagens" />
                     </TouchableOpacity>
                 </View>
+                <TouchableOpacity onPress={favsHandler} style={{...styles.cta, display: 'flex', alignItems: 'center'}}>
+                  <TextOS texto="Aplicar" />
+                </TouchableOpacity>
             </View>
         </View>
         <ScrollView style={{width: '100%', marginTop: 25}}>
@@ -183,11 +282,11 @@ export default function HomeScreen({navigation}) {
                 <Text style={{...styles.font, color: colors.darkGray, fontSize: 20, marginLeft: 5}}>Filtrar</Text>
             </TouchableOpacity>
                 {   
-                    posts.map((p, index) => {
-                        return(
-                            <Post info={p} key={index} />
-                        )
-                    })
+                  posts.map((p, index) => {
+                    return(
+                      <Post info={p} key={index} />
+                    )
+                  })
                 }
             
         </ScrollView>

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native-web"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const colors = {
     "gray": "#201f1d",
@@ -43,42 +44,196 @@ function getTagColor(tagname) {
     }
   }
 
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@uinfo')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   const arrow = require('../../assets/votearrow.png')
+  const varrow = require('../../assets/votearrowH.png')
 
 export default function Post(props){
-    const {info} = props
+    const [votedUp, setVotedUp] = React.useState(false)
+    const [votedDown, setVotedDown] = React.useState(false)
 
-    // React.useEffect(() => {
-    //     console.log(fs)
-    //     info.fotos.forEach(f => {
-    //         if (f !== null) {
-    //             RNFetchBlob.config({
-    //                 // add this option that makes response data to be stored as a file,
-    //                 // this is much more performant.
-    //                 fileCache: true,
-    //               })
-    //                 .fetch("GET", montaImg(f), {
-    //                   //some headers ..
-    //                 })
-    //                 .then((res) => {
-    //                   // the temp file path
-    //                   console.log("The file saved to ", res.path());
-    //                 });
-    //         }
-            
-    //     })
-    // }, [])
+    const {info, votes} = props
+
+    const [voteCount, setVoteCount] = React.useState(info.votos)
+
+    const voteHandler = (val) => {
+        switch (val){
+            case 1:
+                if (votedDown) {
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'PUT',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid},"tipo":true}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response);
+                                if (response.affectedRows == 0) {
+                                    console.log("Incorretos")
+                                    
+                                } else {
+                                    setVoteCount(voteCount + 2)
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                    setVotedDown(!votedDown)
+                } else if(votedUp){
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'DELETE',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid}}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                              console.log(response)
+                              if (response.affectedRows == 0) {
+                                console.log("Incorretos")
+                              } else {
+                                setVoteCount(voteCount - 1)
+                              }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                    
+                } else {
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid},"tipo":true}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                if (response.affectedRows == 0) {
+                                  console.log("Incorretos")
+                                } else {
+                                    setVoteCount(voteCount + 1)
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                }
+                setVotedUp(!votedUp)
+                break;
+
+            case -1:
+                if (votedUp) {
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'PUT',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid},"tipo":false}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response);
+                                if (response.affectedRows == 0) {
+                                    console.log("Incorretos")
+                                } else {
+                                    setVoteCount(voteCount - 2)
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                    setVotedUp(!votedUp)
+                } else if (votedDown){
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'DELETE',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid}}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                              console.log(response)
+                              if (response.affectedRows == 0) {
+                                console.log("Incorretos")
+                              } else {
+                                setVoteCount(voteCount + 1)
+                              }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                    
+                } else {
+                    getData().then((uinfo) => {
+                        const options = {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                            body: `{"id_post":${info.id},"id_usuario":${uinfo.uid},"tipo":false}`
+                          };
+                          
+                          fetch('http://localhost:3000/offside/votos', options)
+                            .then(response => response.json())
+                            .then(response => {
+                                console.log(response)
+                                if (response.affectedRows == 0) {
+                                  console.log("Incorretos")
+                                } else {
+                                    setVoteCount(voteCount - 1)
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    })
+                }
+                setVotedDown(!votedDown)
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    React.useEffect(() => {
+        if (info.voted !== undefined) {
+            switch (info.voted) {
+                case 1:
+                    setVotedUp(true)
+                    break;
+                
+                case 0:
+                    setVotedDown(true)
+                    break;
+    
+                default:
+                    break;
+            }
+        }
+    }, [])
+    
 
     return(
         <View style={{display: 'flex', backgroundColor: colors.darkGray, padding: 15, marginTop: 10, paddingLeft: 50, position: 'relative'}}>
             <View style={{position: 'absolute', left: 14, display: 'flex', alignItems: 'center'}}>
-                <TouchableOpacity>
-                    <Image style={{width: 20, height: 20, rotate: '180deg'}} source={arrow}/>
+                <TouchableOpacity onPress={() => voteHandler(1)}>
+                    <Image style={{width: 20, height: 20, rotate: '180deg'}} source={votedUp ? varrow : arrow}/>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <Image style={{width: 20, height: 20}} source={arrow}/>
+                <TouchableOpacity onPress={() => voteHandler(-1)}>
+                    <Image style={{width: 20, height: 20}} source={votedDown ? varrow : arrow}/>
                 </TouchableOpacity>
-                <Text style={{...styles.white, ...styles.font}}>{info.votos}</Text>
+                <Text style={{...styles.white, ...styles.font}}>{voteCount}</Text>
             </View>
             <Text style={{...styles.font, ...styles.white, fontSize: 17}}>{info.titulo}</Text>
             <Text style={{...styles.font, color: colors.lightGray, marginBottom: 8}}>{info.nome_usuario}</Text>
@@ -89,7 +244,7 @@ export default function Post(props){
                     if (f !== null) {
                         return(
                             <View key={index} style={{width: 80, height: 80, marginRight: 5}}>
-                                <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={image} />
+                                <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={{uri: montaImg(f)}} />
                             </View>
                         )
                     }

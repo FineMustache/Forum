@@ -12,6 +12,7 @@ const TP = require("./controllers/tags_posts.controller")
 const Middleware = require("./middleware/middleware")
 
 router.get("/offside/posts", Post.listarPosts);
+router.get("/offside/posts/mobile", Post.listarPostsMobile);
 router.get("/offside/post/:id", Post.listarPost);
 router.post("/offside/posts", Middleware.validaAcesso, Post.cadastrarPost);
 

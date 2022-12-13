@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native-web"
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native-web"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const dayjs = require('dayjs')
 
@@ -61,11 +61,12 @@ function getTagColor(tagname) {
   const arrow = require('../../assets/votearrow.png')
   const varrow = require('../../assets/votearrowH.png')
 
-export default function Post(props){
+export default function PostScreen({navigation, route}){
     const [votedUp, setVotedUp] = React.useState(false)
     const [votedDown, setVotedDown] = React.useState(false)
+    const [resp, setResp] = React.useState([])
 
-    const {info, onPress} = props
+    const {info} = route.params
 
     const [voteCount, setVoteCount] = React.useState(info.votos)
 
@@ -226,55 +227,102 @@ export default function Post(props){
                     break;
             }
         }
+        const options = {method: 'GET'};
+
+        fetch('http://localhost:3000/offside/post/' + info.id, options)
+        .then(response => response.json())
+        .then(response => {
+            setResp(response[0].respostas)
+        })
+        .catch(err => console.error(err));
     }, [])
     
 
     return(
-        <TouchableOpacity onPress={onPress} style={{display: 'flex', backgroundColor: colors.darkGray, padding: 15, marginTop: 10, paddingLeft: 50, position: 'relative'}}>
-            <View style={{position: 'absolute', left: 14, display: 'flex', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => voteHandler(1)}>
-                    <Image style={{width: 20, height: 20, rotate: '180deg'}} source={votedUp ? varrow : arrow}/>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => voteHandler(-1)}>
-                    <Image style={{width: 20, height: 20}} source={votedDown ? varrow : arrow}/>
-                </TouchableOpacity>
-                <Text style={{...styles.white, ...styles.font}}>{voteCount}</Text>
-            </View>
-            <View style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{...styles.font, ...styles.white, fontSize: 17}}>{info.titulo}</Text>
-                <Text style={{...styles.font, ...styles.white}}>{dayjs(info.data).fromNow()}</Text>
-            </View>
-            <Text style={{...styles.font, color: colors.lightGray, marginBottom: 8}}>{info.nome_usuario}</Text>
-            <Text style={{...styles.font, ...styles.white, marginBottom: 8}}>{info.corpo}</Text>
-            <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
-            {
-                info.fotos.map((f, index) => {
-                    if (f !== null) {
+        <View style={styles.container}>
+            <TouchableOpacity style={{display: 'flex', backgroundColor: colors.darkGray, padding: 15, marginTop: 10, paddingLeft: 50, position: 'relative', width: '100%'}}>
+                <View style={{position: 'absolute', left: 14, display: 'flex', alignItems: 'center'}}>
+                    <TouchableOpacity onPress={() => voteHandler(1)}>
+                        <Image style={{width: 20, height: 20, rotate: '180deg'}} source={votedUp ? varrow : arrow}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => voteHandler(-1)}>
+                        <Image style={{width: 20, height: 20}} source={votedDown ? varrow : arrow}/>
+                    </TouchableOpacity>
+                    <Text style={{...styles.white, ...styles.font}}>{voteCount}</Text>
+                </View>
+                <View style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{...styles.font, ...styles.white, fontSize: 17}}>{info.titulo}</Text>
+                    <Text style={{...styles.font, ...styles.white}}>{dayjs(info.data).fromNow()}</Text>
+                </View>
+                <Text style={{...styles.font, color: colors.lightGray, marginBottom: 8}}>{info.nome_usuario}</Text>
+                <Text style={{...styles.font, ...styles.white, marginBottom: 8}}>{info.corpo}</Text>
+                <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+                {
+                    info.fotos.map((f, index) => {
+                        if (f !== null) {
+                            return(
+                                <View key={index} style={{width: 80, height: 80, marginRight: 5}}>
+                                    <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={{uri: montaImg(f)}} />
+                                </View>
+                            )
+                        }
+                    })
+                }
+                </View>
+                <View style={{display:"flex", flexDirection: "row", marginTop: 10, flexWrap: 'wrap'}}>
+                {
+                    info.tags.map((t, index) => {
                         return(
-                            <View key={index} style={{width: 80, height: 80, marginRight: 5}}>
-                                <Image style={{flex:1, height:null, width:null, resizeMode: 'cover', opacity: 1}} source={{uri: montaImg(f)}} />
+                            <View style={{marginRight: 10, backgroundColor: getTagColor(t), paddingVertical: 5, paddingHorizontal: 10, borderRadius: 15}} key={index}>
+                                <Text style={{...styles.white, ...styles.font}}>{t}</Text>
                             </View>
                         )
-                    }
-                })
-            }
-            </View>
-            <View style={{display:"flex", flexDirection: "row", marginTop: 10, flexWrap: 'wrap'}}>
-            {
-                info.tags.map((t, index) => {
-                    return(
-                        <View style={{marginRight: 10, backgroundColor: getTagColor(t), paddingVertical: 5, paddingHorizontal: 10, borderRadius: 15}} key={index}>
-                            <Text style={{...styles.white, ...styles.font}}>{t}</Text>
-                        </View>
-                    )
-                })
-            }
-            </View>
-        </TouchableOpacity>
+                    })
+                }
+                </View>
+            </TouchableOpacity>
+            <ScrollView style={{display: 'flex', paddingLeft: 20, width: "100%", flex: 1}}>
+                {
+                    resp.map((r, index) => {
+                        return(
+                            <View key={index} style={{width: '100%'}}>
+                                <View style={{display: 'flex', backgroundColor: colors.darkGray, padding: 15, marginTop: 10, position: 'relative', width: '100%', borderLeftWidth: 2, borderLeftColor: colors.yellow}}>
+                                    <View style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{color: colors.lightGray, ...styles.font}}>{r.nome_resposta}</Text>
+                                        <Text style={{...styles.white, ...styles.font}}>{dayjs(r.resp_data).fromNow()}</Text>
+                                    </View>
+                                    <Text style={{...styles.white, ...styles.font}}>{r.resp_corpo}</Text>
+                                </View>
+                                <View style={{display: r.corpo_treplica == null ? 'none' : 'flex', paddingLeft: 20, width: '100%', marginTop: 10}}>
+                                    <View style={{width: '100%', backgroundColor: colors.darkGray, padding: 15, borderLeftWidth: 2, borderLeftColor: colors.yellow}}>
+                                        <View style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+                                            <Text style={{color: colors.lightGray, ...styles.font}}>{r.nome_treplica}</Text>
+                                            <Text style={{...styles.white, ...styles.font}}>{dayjs(r.data_treplica).fromNow()}</Text>
+                                        </View>
+                                        <Text style={{...styles.white, ...styles.font}}>{r.resp_corpo}</Text>
+                                    </View>
+                                </View>
+                                
+                            </View>
+                        )
+                    })
+                }
+            </ScrollView>
+            
+            
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
+    'container': {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: colors.gray,
+        padding: 25,
+        paddingTop: 0,
+        position: 'relative'
+    },
     'white':{
         color: '#ffffff'
     },

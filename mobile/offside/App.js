@@ -8,6 +8,7 @@ const Stack = createNativeStackNavigator();
 import LoginScreen from './pages/Login';
 import SignUpScreen from './pages/SignUp';
 import HomeScreen from './pages/Home';
+import PostScreen from './pages/Post';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Stack.Screen options={{headerTitleStyle: {color: '#ffffff'}}} name="Home" component={HomeScreen}  />
         <Stack.Screen options={{headerTitleStyle: {color: '#ffffff'}}} name="Login" component={LoginScreen}  />
         <Stack.Screen options={{headerTitleStyle: {color: '#ffffff'}}} name="Cadastro" component={SignUpScreen}  />
+        <Stack.Screen options={{headerTitleStyle: {color: '#ffffff'}}} name="Post" component={PostScreen}  />
       </Stack.Navigator>
     </NavigationContainer>
   );

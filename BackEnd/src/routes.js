@@ -35,6 +35,7 @@ router.delete("/offside/treplicas", Treplicas.del)
 
 router.get("/offside/fotos/:id", Fotos.listarFotos)
 router.post("/offside/fotos", Fotos.cadastrarFoto);
+router.post("/offside/fotos/mobile", Fotos.cadastrarFotoMobile);
 
 router.post("/offside/favoritos", Favoritos.toCreate)
 router.delete("/offside/favoritos", Favoritos.toDelete)

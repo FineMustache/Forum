@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 const multer = require('multer');
 const upload = multer().array('fotos')
+const uploadSingle = multer().single('foto')
 
 const cadastrarFoto = (req, res) => {
     upload(req, res, (errMulter) => {
@@ -28,6 +29,26 @@ const cadastrarFoto = (req, res) => {
     })
 }
 
+const cadastrarFotoMobile = (req, res) => {
+    uploadSingle(req, res, (errMulter) => {
+        if (errMulter == null) {
+            console.log(req)
+                con.query(Foto.toCreate(req.body, req.file), (err, result) => {
+                    if (err == null) {
+                        res.status(201).json(result).end()
+                    } else {
+                        res.status(500).json(err).end()
+                        return
+                    }
+                })
+            
+        } else {
+            console.log(errMulter)
+            res.status(500).json(errMulter).end()
+        }
+    })
+}
+
 const listarFotos = (req, res) => {
     con.query(Foto.toRead(req.params), (err, result) => {
         if (err == null) {
@@ -40,5 +61,6 @@ const listarFotos = (req, res) => {
 
 module.exports = {
     cadastrarFoto,
+    cadastrarFotoMobile,
     listarFotos
 }

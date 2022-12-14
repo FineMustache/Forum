@@ -92,6 +92,7 @@ export default function HomeScreen({navigation}) {
     const [posts, setPosts] = React.useState([])
     const [modalOn, setModalOn] = React.useState(false)
     const [modalPostOn, setModalPostOn] = React.useState(false)
+    const [modalPostTagOn, setModalPostTagOn] = React.useState(false)
     const [titulo, setTitulo] = React.useState("")
     const [corpo, setCorpo] = React.useState("")
     const [imagens, setImagens] = React.useState([])
@@ -103,6 +104,12 @@ export default function HomeScreen({navigation}) {
     const [tag4, setTag4] = React.useState(false)
     const [tag5, setTag5] = React.useState(false)
     const [tag6, setTag6] = React.useState(false)
+    const [tagPost1, setTagPost1] = React.useState(false)
+    const [tagPost2, setTagPost2] = React.useState(false)
+    const [tagPost3, setTagPost3] = React.useState(false)
+    const [tagPost4, setTagPost4] = React.useState(false)
+    const [tagPost5, setTagPost5] = React.useState(false)
+    const [tagPost6, setTagPost6] = React.useState(false)
     const [votes, setVotes] = React.useState([])
 
     const favsHandler = () => {
@@ -244,10 +251,6 @@ export default function HomeScreen({navigation}) {
           return willFocusSubscription;
     }, [])
 
-    React.useEffect(() => {
-      console.log(imagens)
-}, [imagens]) 
-
     let [fontsLoaded] = useFonts({
         Kanit_400Regular,
         Kanit_200ExtraLight,
@@ -271,6 +274,77 @@ export default function HomeScreen({navigation}) {
           alert('You did not select any image.');
         }
       };
+
+      const sendNewPost = () => {
+        if(titulo.length > 0 && corpo.length > 0){
+          let tags = []
+          if(tagPost1) tags.push(1)
+          if(tagPost2) tags.push(2)
+          if(tagPost3) tags.push(3)
+          if(tagPost4) tags.push(4)
+          if(tagPost5) tags.push(5)
+          if(tagPost6) tags.push(6)
+
+          console.log(tagPost1) 
+          console.log(tagPost2)
+          console.log(tagPost3)
+          console.log(tagPost4)
+          console.log(tagPost5)
+          console.log(tagPost6)
+
+          console.log(tags)
+          getData().then((uinfo) => {
+              fetch(`http://localhost:3000/offside/posts`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                body: `{"id_usuario":"${uinfo.uid}","titulo":"${titulo}","corpo":"${corpo}","votos":0}`
+              })
+                .then((response) => response.json())
+                .then((responseP) => {
+                  if (responseP.affectedRows > 0) {
+                    imagens.forEach(async (i, index) => {
+                      let fetchBody = await createFormData(i, {id_post: responseP.insertId})
+                      fetch(`http://localhost:3000/offside/fotos/mobile`, {
+                        method: 'POST',
+                        body: fetchBody,
+                      })
+                        .then((response) => response.json())
+                        .then((response) => {
+                          if (response.affectedRows > 0) {
+                            console.log("imagem no grau " + index)
+                          }
+                        })
+                        .catch((error) => {
+                          console.log('error', error);
+                        });
+                    })
+                    tags.forEach((t, index) => {
+                      const options = {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: `{"id_post":${responseP.insertId},"id_tag":${t}}`
+                      };
+                      
+                      fetch('http://localhost:3000/offside/tags_posts', options)
+                        .then(response => response.json())
+                        .then(response => {
+                          if (index == tags.length - 1) {
+                            navigation.reset({
+                              index: 0,
+                              routes: [{name: 'Home'}]
+                            })
+                          }
+                        })
+                        .catch(err => console.error(err));
+                    })
+                  }
+                })
+                .catch((error) => {
+                  console.log('error', error);
+                });
+          })
+        }
+      }
 
     return (
       <View style={styles.container}>
@@ -315,21 +389,52 @@ export default function HomeScreen({navigation}) {
                       ({imagens.length})
                     </Text>
                   </TouchableOpacity>
-                  <Text style={{color: colors.yellow, ...styles.font, display: 'flex', alignItems: 'center'}}>
-                    Adicionar Categorias
-                    <FontAwesome5 name="tag" size={20} color={colors.yellow} style={{marginLeft: 5}} />
-                  </Text>
+                  <TouchableOpacity onPress={() => setModalPostTagOn(true)}>
+                    <Text style={{color: colors.yellow, ...styles.font, display: 'flePostx', alignItems: 'center'}}>
+                      Adicionar Categorias
+                      <FontAwesome5 name="tag" size={20} color={colors.yellow} style={{marginLeft: 5}} />
+                    </Text>
+                  </TouchableOpacity>
+                  
                 </View>
                 <View>
                 </View>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <TouchableOpacity onPress={favsHandler} style={{...styles.cta, display: 'flex', alignItems: 'center', flex: 1, marginRight: 5}}>
+                  <TouchableOpacity onPress={() => setModalPostOn(false)} style={{...styles.cta, display: 'flex', alignItems: 'center', flex: 1, marginRight: 5}}>
                     <TextOS texto="Cancelar" />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={favsHandler} style={{...styles.cta, display: 'flex', alignItems: 'center', flex: 1}}>
+                  <TouchableOpacity onPress={() => sendNewPost()} style={{...styles.cta, display: 'flex', alignItems: 'center', flex: 1}}>
                     <TextOS texto="Confirmar" />
                   </TouchableOpacity>
                 </View>
+            </View>
+        </View>
+        <View style={{position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', zIndex: 2, display: modalPostTagOn ? 'flex' : 'none', alignItems: 'center', justifyContent:'center', padding: 20}}>
+            <View style={{padding: 20, backgroundColor: colors.darkGray, shadowColor: colors.black, shadowRadius: 50}}>
+                <TextOS texto="Selecione as Categorias" style={{fontSize: 24, textAlign: 'center', marginBottom: 10}} />
+                <View style={{display: 'flex', alignItems: 'center'}}>
+                    <TouchableOpacity onPress={() => setTagPost1(!tagPost1)} style={{backgroundColor: tagPost1 ? getTagColor("Copa do Mundo") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Copa do Mundo'), marginBottom: 10}}>
+                        <TextOS texto="Copa do Mundo" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTagPost2(!tagPost2)} style={{backgroundColor: tagPost2 ? getTagColor("Champions League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Champions League'), marginBottom: 10}}>
+                        <TextOS texto="Champions League" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTagPost3(!tagPost3)} style={{backgroundColor: tagPost3 ? getTagColor("Premier League") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Premier League'), marginBottom: 10}}>
+                        <TextOS texto="Premier League" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTagPost4(!tagPost4)} style={{backgroundColor: tagPost4 ? getTagColor("Discussão") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Discussão'), marginBottom: 10}}>
+                        <TextOS texto="Discussão" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTagPost5(!tagPost5)} style={{backgroundColor: tagPost5 ? getTagColor("Brasil") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Brasil'), marginBottom: 10}}>
+                        <TextOS texto="Brasil" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setTagPost6(!tagPost6)} style={{backgroundColor: tagPost6 ? getTagColor("Imagens") : colors.darkGray, paddingVertical: 5, paddingHorizontal: 10, borderWidth: 2, borderColor: getTagColor('Imagens')}}>
+                        <TextOS texto="Imagens" />
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity onPress={() => setModalPostTagOn(false)} style={{...styles.cta, display: 'flex', alignItems: 'center'}}>
+                  <TextOS texto="Aplicar" />
+                </TouchableOpacity>
             </View>
         </View>
         <ScrollView style={{width: '100%', marginTop: 25, marginBottom: 25}}>

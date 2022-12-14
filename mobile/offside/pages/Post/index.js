@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native-web"
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from "react-native-web"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const dayjs = require('dayjs')
 
@@ -65,6 +65,9 @@ export default function PostScreen({navigation, route}){
     const [votedUp, setVotedUp] = React.useState(false)
     const [votedDown, setVotedDown] = React.useState(false)
     const [resp, setResp] = React.useState([])
+    const [respCorpo, setRespCorpo] = React.useState("")
+    const [trepCorpo, setTrepCorpo] = React.useState("")
+    const [postOwner, setPostOwner] = React.useState(false)
 
     const {info} = route.params
 
@@ -213,6 +216,10 @@ export default function PostScreen({navigation, route}){
     }
 
     React.useEffect(() => {
+        load()
+    }, [])
+
+    const load = () => {
         if (info.voted !== undefined) {
             switch (info.voted) {
                 case 1:
@@ -229,13 +236,61 @@ export default function PostScreen({navigation, route}){
         }
         const options = {method: 'GET'};
 
+        getData().then((uinfo) => {
+            if (info.nome_usuario == uinfo.uname) {
+                setPostOwner(true)
+            }
+        })
+
         fetch('http://localhost:3000/offside/post/' + info.id, options)
         .then(response => response.json())
         .then(response => {
             setResp(response[0].respostas)
         })
         .catch(err => console.error(err));
-    }, [])
+    }
+
+    const sendResp = () =>{
+        if (respCorpo.length > 0) {
+            getData().then((uinfo) => {
+                const options = {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                    body: `{"id_post":${info.id},"id_usuario":${uinfo.uid},"corpo":"${respCorpo}"}`
+                  };
+                  
+                  fetch('http://localhost:3000/offside/respostas', options)
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.affectedRows > 0) {
+                            load()
+                        }
+                    })
+                    .catch(err => console.error(err));
+            })
+        }
+    }
+
+    const sendTrep = (id_resp) => {
+        if (trepCorpo.length > 0) {
+            getData().then((uinfo) => {
+                const options = {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', Authorization: uinfo.token},
+                    body: `{"id_resposta":${id_resp},"id_usuario":${uinfo.uid},"corpo":"${trepCorpo}"}`
+                  };
+                  
+                  fetch('http://localhost:3000/offside/treplicas', options)
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.affectedRows > 0) {
+                            load()
+                        }
+                    })
+                    .catch(err => console.error(err));
+            })
+        }
+    }
     
 
     return(
@@ -281,6 +336,12 @@ export default function PostScreen({navigation, route}){
                 }
                 </View>
             </TouchableOpacity>
+            <View style={{width: "100%", padding: 15, backgroundColor: colors.darkGray, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                <TextInput placeholder={"Resposta..."} style={{...styles.input, flex: 4, marginBottom: 0}} placeholderTextColor={colors.lightGray} onChangeText={(val) => { setRespCorpo(val)}}/>
+                <TouchableOpacity onPress={sendResp} style={{...styles.cta, flex: 1, marginTop: 0}}>
+                    <Text style={{...styles.white, ...styles.font, textAlign: 'center'}}>Enviar</Text>
+                </TouchableOpacity>
+            </View>
             <ScrollView style={{display: 'flex', paddingLeft: 20, width: "100%", flex: 1}}>
                 {
                     resp.map((r, index) => {
@@ -299,9 +360,18 @@ export default function PostScreen({navigation, route}){
                                             <Text style={{color: colors.lightGray, ...styles.font}}>{r.nome_treplica}</Text>
                                             <Text style={{...styles.white, ...styles.font}}>{dayjs(r.data_treplica).fromNow()}</Text>
                                         </View>
-                                        <Text style={{...styles.white, ...styles.font}}>{r.resp_corpo}</Text>
+                                        <Text style={{...styles.white, ...styles.font}}>{r.corpo_treplica}</Text>
                                     </View>
                                 </View>
+                                <View style={{display: r.corpo_treplica == null && postOwner ? 'flex' : 'none', paddingLeft: 20, width: '100%', marginTop: 10}}>
+                                <View style={{width: "100%", padding: 15, backgroundColor: colors.darkGray, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                    <TextInput placeholder={"Treplica..."} style={{...styles.input, flex: 4, marginBottom: 0}} placeholderTextColor={colors.lightGray} onChangeText={(val) => { setTrepCorpo(val)}}/>
+                                    <TouchableOpacity onPress={() => sendTrep(r.id_resp)} style={{...styles.cta, flex: 1, marginTop: 0}}>
+                                        <Text style={{...styles.white, ...styles.font, textAlign: 'center'}}>Enviar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                </View>
+                                
                                 
                             </View>
                         )
@@ -328,5 +398,25 @@ const styles = StyleSheet.create({
     },
     'font': {
         fontFamily: 'Kanit_400Regular'
+    },
+    'input':{
+        padding: 10,
+        color: '#ffffff',
+        width: '100%',
+        borderColor: colors.white,
+        borderWidth: 1,
+        borderStyle: 'solid',
+        marginBottom: 10,
+        fontFamily: 'Kanit_400Regular'
+    },
+    'cta':{
+        padding: 10,
+        width: "100%",
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
+        borderColor: colors.white,
+        borderWidth: 1,
+        marginTop: 25
     }
 })

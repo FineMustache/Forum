@@ -550,27 +550,31 @@ function sendPost() {
   
   fetch('http://localhost:3000/offside/posts', options)
     .then(response => response.json())
-    .then(response => {
-      if (response.affectedRows > 0) {
-        postTags.forEach(pt => {
+    .then(responseP => {
+      if (responseP.affectedRows > 0) {
+        postTags.forEach((pt, indexT) => {
           var options2 = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: `{"id_post":${response.insertId},"id_tag":${pt}}`
+            body: `{"id_post":${responseP.insertId},"id_tag":${pt}}`
           };
           
           fetch('http://localhost:3000/offside/tags_posts', options2)
             .then(response => response.json())
-            .then(response => {})
+            .then(response => {
+              if(indexT == postTags.length -1){
+                if (document.querySelector("#inpFiles").files.length < 1) {
+                  window.location.reload()
+                }else{
+                  document.querySelector("#inpIdPost").value = responseP.insertId
+                  console.log(Object.fromEntries(new FormData(document.querySelector("#formFile"))));
+                  document.querySelector("#formFile").submit()
+                }
+              }
+              
+            })
             .catch(err => console.error(err));
         })
-        if (document.querySelector("#inpFiles").files.length < 1) {
-          window.location.reload()
-        }else{
-          document.querySelector("#inpIdPost").value = response.insertId
-          console.log(Object.fromEntries(new FormData(document.querySelector("#formFile"))));
-          document.querySelector("#formFile").submit()
-        }
         
       }
     })

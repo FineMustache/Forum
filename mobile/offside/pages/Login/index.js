@@ -88,7 +88,10 @@ export default function LoginScreen({navigation}) {
             <TouchableOpacity onPress={() => logar()} style={styles.cta}>
                 <TextOS texto="Entrar" style={{textAlign: 'center'}} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Cadastro')} style={{marginTop: 20}}>
+            <TouchableOpacity onPress={() => navigation.reset({
+              index: 0,
+              routes: [{name: 'Cadastro'}]
+            })} style={{marginTop: 20}}>
                 <Text style={{...styles.font, textAlign: 'center', color: colors.yellow}}>Criar uma Conta</Text>
             </TouchableOpacity>
         </View>

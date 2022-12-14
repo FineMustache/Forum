@@ -149,11 +149,7 @@ export default function HomeScreen({navigation}) {
                                                 response.forEach(u => {
                                                   let aux = []
                                                 responseP.forEach(p => {
-                                                  p.tags.forEach(t => {
-                                                    if (u.favoritos.includes(t) && !aux.includes(p)) {
-                                                      aux.push(p)
-                                                    }
-                                                  })
+                                                  aux.push(p)
                                                 })
                                                 setFavs(u.favoritos)
                                                 setPosts(aux)

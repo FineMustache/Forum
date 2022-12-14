@@ -157,7 +157,7 @@ export default function SignUpScreen({navigation}) {
             <TouchableOpacity onPress={singup} style={styles.cta}>
                 <TextOS texto="Cadastrar" style={{textAlign: 'center'}} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{marginTop: 20}}>
+            <TouchableOpacity onPress={() => navigation.reset({index: 0, routes: [{name: 'Login'}]})} style={{marginTop: 20}}>
                 <Text style={{...styles.font, textAlign: 'center', color: colors.yellow}}>Entrar com uma Conta Existente</Text>
             </TouchableOpacity>
         </View>

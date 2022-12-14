@@ -115,7 +115,15 @@ INSERT INTO roles VALUES
 (DEFAULT, "ADMIN"),
 (DEFAULT, "USER");
 
-INSERT INTO usuarios VALUES
+INSERT INTO tags VALUES
+(DEFAULT, "Copa do Mundo", "#56042C"),
+(DEFAULT, "Champions League", "#06113a"),
+(DEFAULT, "Premier League", "#38003C"),
+(DEFAULT, "Discussão", "#000000"),
+(DEFAULT, "Brasil", "#009739"),
+(DEFAULT, "Imagens", "#960000");
+
+/* INSERT INTO usuarios VALUES
 (DEFAULT, "finemustache", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 1, NULL),
 (DEFAULT, "vinimalvadao", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 2, NULL),
 (DEFAULT, "sanzappa", "$2b$10$.kIl9dZA1SvgtEwIGREawuDZco9vN9IZyxS86vqzBDLYyruqaOmVC", 2, NULL),
@@ -124,10 +132,10 @@ INSERT INTO usuarios VALUES
 #Caminho CASA C:/Users/usuario/Documents/SENAI2022/forum/docs/
 #Caminho SENAI C:/Users/des/Documents/Forum/docs/
 
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/finemustache.png")) where id = 1;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/vinimalvadao.png")) where id = 2;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/sanzappa.png")) where id = 3;
-UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/felipe357.jpg")) where id = 4;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/finemustache.png")) where id = 1;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/vinimalvadao.png")) where id = 2;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/sanzappa.png")) where id = 3;
+UPDATE usuarios SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/felipe357.jpg")) where id = 4;
 
 INSERT INTO posts VALUES
 (DEFAULT, 1, "Harry Kane brabo dms", "Se liga umas foto dele", 200, CURRENT_TIME()),
@@ -152,10 +160,10 @@ INSERT INTO fotos VALUES
 (DEFAULT, NULL, 2),
 (DEFAULT, NULL, 3);
 
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/hk1.jpg")) where id = 1;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/hk2.jpg")) where id = 2;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/haaland.jpg")) where id = 3;
-UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/usuario/Documents/SENAI2022/forum/docs/cr7.jpg")) where id = 4;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/hk1.jpg")) where id = 1;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/hk2.jpg")) where id = 2;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/haaland.jpg")) where id = 3;
+UPDATE fotos SET foto=to_base64(LOAD_FILE("C:/Users/des/Documents/Forum/docs/cr7.jpg")) where id = 4;
 
 INSERT INTO votos VALUES
 (DEFAULT, 1, 2, true),
@@ -167,14 +175,6 @@ INSERT INTO votos VALUES
 (DEFAULT, 4, 1, false),
 (DEFAULT, 4, 2, true),
 (DEFAULT, 4, 3, false);
-
-INSERT INTO tags VALUES
-(DEFAULT, "Copa do Mundo", "#56042C"),
-(DEFAULT, "Champions League", "#06113a"),
-(DEFAULT, "Premier League", "#38003C"),
-(DEFAULT, "Discussão", "#000000"),
-(DEFAULT, "Brasil", "#009739"),
-(DEFAULT, "Imagens", "#960000");
 
 INSERT INTO tags_posts VALUES
 (DEFAULT, 1, 3),
@@ -194,7 +194,7 @@ INSERT INTO favoritos VALUES
 (DEFAULT, 2, 5),
 (DEFAULT, 2, 6),
 (DEFAULT, 3, 1),
-(DEFAULT, 3, 6);
+(DEFAULT, 3, 6); */
 
 DELIMITER $
 

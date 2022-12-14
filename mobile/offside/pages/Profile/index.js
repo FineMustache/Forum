@@ -190,7 +190,7 @@ export default function ProfileScreen({navigation}) {
     return (
       <View style={styles.container}>
         <View style={{display: 'flex', width: '100%', alignItems: 'center', marginTop: 10}}>
-            <Image style={{width: 150, height: 150, borderRadius: '100%'}} source={img} />
+            <Image style={{width: 150, height: 150, borderRadius: '100%'}} source={image == null ? img : {uri: montaImg(user.foto)}} />
             <Text style={{color: colors.white, ...styles.font, fontSize: 25}}>{user.nome}</Text>
         </View>
         <View style={{display: 'flex', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: '10%', justifyContent: 'space-evenly', marginTop: 10}}>
